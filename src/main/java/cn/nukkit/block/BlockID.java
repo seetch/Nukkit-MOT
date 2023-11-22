@@ -458,9 +458,33 @@ public interface BlockID {
 
     int COPPER_ORE = 566;
 
+    int DIRT_WITH_ROOTS = 573;
+
+    int BIG_DRIPLEAF = 578;
+
     int RAW_IRON_BLOCK = 706;
 
     int RAW_COPPER_BLOCK = 707;
 
     int RAW_GOLD_BLOCK = 708;
+
+    int MANGROVE_LEAVES = 727;
+
+    int MANGROVE_PROPAGULE = 729;
+
+    int MANGROVE_ROOTS = 737;
+    int MUDDY_MANGROVE_ROOTS = 738;
+    int MANGROVE_LOG = 739;
+    int STRIPPED_MANGROVE_LOG = 740;
+    int MANGROVE_PLANKS = 741;
+    int MANGROVE_BUTTON = 742;
+    int MANGROVE_STAIRS = 743;
+    int MANGROVE_SLAB = 744;
+    int MANGROVE_PRESSURE_PLATE = 745;
+    int MANGROVE_FENCE = 746;
+    int MANGROVE_FENCE_GATE = 747;
+
+    int MANGROVE_TRAPDOOR = 751;
+    int MANGROVE_WOOD = 752;
+    int STRIPPED_MANGROVE_WOOD = 753;
 }

@@ -460,6 +460,26 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[RAW_COPPER_BLOCK] = BlockRawCopper.class; //707
             list[RAW_GOLD_BLOCK] = BlockRawGold.class; //708
 
+            list[MANGROVE_LEAVES] = BlockLeavesMangrove.class; //727
+
+            list[MANGROVE_PROPAGULE] = BlockMangrovePropagule.class; //729
+
+            list[MANGROVE_ROOTS] = BlockMangroveRoots.class; //737
+            list[MUDDY_MANGROVE_ROOTS] = BlockMangroveRootsMuddy.class; //738
+            list[MANGROVE_LOG] = BlockLogMangrove.class; //739
+            list[STRIPPED_MANGROVE_LOG] = BlockLogStrippedMangrove.class; //740
+            list[MANGROVE_PLANKS] = BlockPlanksMangrove.class; //741
+            list[MANGROVE_BUTTON] = BlockButtonMangrove.class; //742
+            list[MANGROVE_STAIRS] = BlockStairsMangrove.class; //743
+            list[MANGROVE_SLAB] = BlockSlabMangrove.class; //744
+            list[MANGROVE_PRESSURE_PLATE] = BlockPressurePlateMangrove.class; //745
+            list[MANGROVE_FENCE] = BlockFenceMangrove.class; //746
+            list[MANGROVE_FENCE_GATE] = BlockFenceGateMangrove.class; //747
+
+            list[MANGROVE_TRAPDOOR] = BlockTrapdoorMangrove.class; //751
+            list[MANGROVE_WOOD] = BlockWoodMangrove.class; //752
+            list[STRIPPED_MANGROVE_WOOD] = BlockWoodStrippedMangrove.class; //753
+
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
                 Class<?> c = list[id];
                 if (c != null) {

@@ -1234,13 +1234,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.unloadChunk(Level.getHashX(index), Level.getHashZ(index));
         }
 
-        if (this.protocol >= 313) {
-            if (!loadQueue.isEmpty()) {
-                NetworkChunkPublisherUpdatePacket packet = new NetworkChunkPublisherUpdatePacket();
-                packet.position = this.asBlockVector3();
-                packet.radius = this.chunkRadius << 4;
-                this.dataPacket(packet);
-            }
+        if (this.protocol >= ProtocolInfo.v1_8_0 && !loadQueue.isEmpty()) {
+            NetworkChunkPublisherUpdatePacket packet = new NetworkChunkPublisherUpdatePacket();
+            packet.position = this.asBlockVector3();
+            packet.radius = this.chunkRadius << 4;
+            this.dataPacket(packet);
         }
 
         return true;
@@ -1347,11 +1345,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
 
         if (this.getServer().bedSpawnpoints) {
-            //if (!this.getSpawn().equals(pos)) {
-            //    this.setSpawn(pos);
-                this.setSpawnBlock(pos);
-                this.sendTranslation("§7%tile.bed.respawnSet");
-            //}
+            this.setSpawnBlock(pos);
+            this.sendTranslation("§7%tile.bed.respawnSet");
         }
 
         this.level.sleepTicks = 60;
@@ -2280,7 +2275,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (protocol >= ProtocolInfo.v1_20_10_21) {
-            if (this.age%200 == 0) {
+            if (this.age % 200 == 0) {
                 this.dataPacket(new NetworkStackLatencyPacket());
             }
         }
@@ -4271,7 +4266,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         int tradeXP = ta.getInt("traderExp");
                                         this.addExperience(ta.getByte("rewardExp"));
                                         ent.addExperience(tradeXP);
-                                        this.level.addSound(this, Sound.RANDOM_ORB, 0,3f, this);
+                                        this.level.addSound(this, Sound.RANDOM_ORB, 0, 3f, this);
                                     }
                                 }
                             }
