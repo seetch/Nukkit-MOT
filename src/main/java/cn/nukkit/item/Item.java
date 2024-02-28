@@ -887,11 +887,21 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         };
     }
 
-    public static OK<?> registerCustomItem(Class<? extends CustomItem> clazz) {
+    public static OK<?> registerCustomItem(@NotNull List<Class<? extends CustomItem>> itemClassList) {
+        for (Class<? extends CustomItem> itemClass : itemClassList) {
+            OK<?> result = registerCustomItem(itemClass);
+            if (!result.ok()) {
+                return result;
+            }
+        }
+        return new OK<>(true);
+    }
+
+    public static OK<?> registerCustomItem(@NotNull Class<? extends CustomItem> clazz) {
         return registerCustomItem(clazz, true);
     }
 
-    public static OK<?> registerCustomItem(Class<? extends CustomItem> clazz, boolean addCreativeItem) {
+    public static OK<?> registerCustomItem(@NotNull Class<? extends CustomItem> clazz, boolean addCreativeItem) {
         if (!Server.getInstance().enableExperimentMode) {
             Server.getInstance().getLogger().warning("The server does not have the experiment mode feature enabled. Unable to register the custom item!");
             return new OK<>(false, "The server does not have the experiment mode feature enabled. Unable to register the custom item!");
@@ -1091,7 +1101,8 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                     if (meta.isPresent()) {
                         item.setDamage(meta.getAsInt());
                     }
-                    return item;
+                    // Avoid the upcoming changes to the original item object
+                    return item.clone();
                 } catch (Exception e) {
                     log.warn("Could not create a new instance of {} using the namespaced id {}", constructor, namespacedId, e);
                 }
@@ -1129,6 +1140,10 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     }
 
     public static Item fromJson(Map<String, Object> data) {
+        return fromJson(data, false);
+    }
+
+    public static Item fromJson(Map<String, Object> data, boolean ignoreUnsupported) {
         String nbt = (String) data.get("nbt_b64");
         byte[] nbtBytes;
         if (nbt != null) {
@@ -1142,7 +1157,11 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             }
         }
 
-        Item item = fromString(data.get("id") + ":" + data.getOrDefault("damage", 0));
+        Object id1 = data.get("id");
+        if (ignoreUnsupported && !Utils.hasItemOrBlock(id1)) {
+            return null;
+        }
+        Item item = fromString(id1 + ":" + data.getOrDefault("damage", 0));
         item.setCount(Utils.toInt(data.getOrDefault("count", 1)));
         item.setCompoundTag(nbtBytes);
         return item;

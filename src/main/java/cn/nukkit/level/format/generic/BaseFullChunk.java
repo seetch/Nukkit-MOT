@@ -105,36 +105,23 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         return chunk;
     }
 
-    protected BaseFullChunk fullClone() {
+    protected BaseFullChunk cloneForChunkSending() {
         BaseFullChunk chunk;
         try {
             chunk = (BaseFullChunk)super.clone();
         } catch (CloneNotSupportedException e) {
             return null;
         }
-        if (this.biomes != null) {
-            chunk.biomes = this.biomes.clone();
-        }
-
-        if (this.blocks != null) {
-            chunk.blocks = this.blocks.clone();
-        }
-
-        if (this.heightMap != null) {
-            chunk.heightMap = this.heightMap.clone();
-        }
-
-        if (this.entities != null) {
-            chunk.entities = new Long2ObjectOpenHashMap<>(this.entities);
-        }
 
         if (this.tiles != null) {
             chunk.tiles = new Long2ObjectOpenHashMap<>(this.tiles);
         }
 
+        chunk.entities = null;
         chunk.tileList = null;
         chunk.NBTentities = null;
         chunk.NBTtiles = null;
+        chunk.extraData = null;
         return chunk;
     }
 
@@ -276,10 +263,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public int getBiomeColor(int x, int z) {
         return 0;
-    }
-
-    @Override
-    public void setBiomeIdAndColor(int x, int z, int idAndColor) {
     }
 
     @Override

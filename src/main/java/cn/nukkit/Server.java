@@ -39,6 +39,7 @@ import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
+import cn.nukkit.level.format.leveldb.LevelDBProvider;
 import cn.nukkit.level.generator.*;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
@@ -525,6 +526,8 @@ public class Server {
      */
     public final ForkJoinPool computeThreadPool;
 
+    public boolean useNativeLevelDB;
+
     Server(final String filePath, String dataPath, String pluginPath, boolean loadPlugins, boolean debug) {
         Preconditions.checkState(instance == null, "Already initialized!");
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
@@ -702,6 +705,7 @@ public class Server {
         }
 
         LevelProviderManager.addProvider(this, Anvil.class);
+        LevelProviderManager.addProvider(this, LevelDBProvider.class);
 
         Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
@@ -2906,6 +2910,7 @@ public class Server {
      */
     private static void registerBlockEntities() {
         BlockEntity.registerBlockEntity(BlockEntity.FURNACE, BlockEntityFurnace.class);
+        BlockEntity.registerBlockEntity(BlockEntity.BLAST_FURNACE, BlockEntityBlastFurnace.class);
         BlockEntity.registerBlockEntity(BlockEntity.CHEST, BlockEntityChest.class);
         BlockEntity.registerBlockEntity(BlockEntity.SIGN, BlockEntitySign.class);
         BlockEntity.registerBlockEntity(BlockEntity.ENCHANT_TABLE, BlockEntityEnchantTable.class);
@@ -3102,6 +3107,8 @@ public class Server {
                 noTickingWorlds.add(tokenizer.nextToken());
             }
         }
+
+        this.useNativeLevelDB = this.getPropertyBoolean("use-native-leveldb", false);
     }
 
     /**
@@ -3243,6 +3250,8 @@ public class Server {
             put("use-waterdog", false);
             put("enable-spark", false);
             put("hastebin-token", "");
+
+            put("use-native-leveldb", false);
         }
     }
 

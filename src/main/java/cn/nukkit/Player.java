@@ -156,6 +156,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int BEACON_WINDOW_ID = 4;
     public static final int GRINDSTONE_WINDOW_ID = 5;
     public static final int SMITHING_WINDOW_ID = 6;
+    /**
+     * @since 649 1.20.60
+     * 自1.20.60开始，需要发送ContainerOpenPacket给玩家才能正常打开讲台上的书
+     * 在原版中id按顺序增加，但测试中采用固定id也可正常实现功能
+     */
+    public static final int LECTERN_WINDOW_ID = 7;
+
+    // 后续创建的窗口应该从此数值开始
+    public static final int MINIMUM_OTHER_WINDOW_ID = Utils.dynamic(8);
 
     protected static final int RESOURCE_PACK_CHUNK_SIZE = 8 * 1024; // 8KB
 
@@ -173,7 +182,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public long lastBreak = -1;
     private BlockVector3 lastBreakPosition = new BlockVector3();
 
-    protected int windowCnt = 4;
+    protected int windowCnt = MINIMUM_OTHER_WINDOW_ID;
 
     protected final BiMap<Inventory, Integer> windows = HashBiMap.create();
     protected final BiMap<Integer, Inventory> windowIndex = windows.inverse();
@@ -2028,6 +2037,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected void resetClientMovement() {
         this.newPosition = null;
         this.positionChanged = false;
+        this.clientMovements.clear();
     }
 
     protected void revertClientMotion(Location originalPos) {
@@ -3696,8 +3706,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                         }
                         if (this.protocol >= 407) {
-                            Optional<Inventory> topWindow = this.getTopWindow();
-                            if (!this.inventoryOpen && !(topWindow.isPresent() && topWindow.get().getViewers().contains(this))) {
+                            //Optional<Inventory> topWindow = this.getTopWindow();
+                            if (!this.inventoryOpen/* && !(topWindow.isPresent() && topWindow.get().getViewers().contains(this))*/) {
                                 this.inventoryOpen = this.inventory.open(this);
                             }
                         }
@@ -5040,11 +5050,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void emote(EmotePacket emote) {
-        if (this.protocol < ProtocolInfo.v1_20_0_23) {
-            emote.xuid = this.getLoginChainData().getXUID();
-            //未知参数，1.20.0发送的是空的
-            //emote.platformId = this.getLoginChainData().getDeviceId();
-        }
         for (Player player : this.getViewers().values()) {
             if (player.protocol >= ProtocolInfo.v1_16_0) {
                 player.dataPacket(emote);
@@ -6441,7 +6446,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
         int cnt;
         if (forceId == null) {
-            this.windowCnt = cnt = Math.max(4, ++this.windowCnt % 99);
+            this.windowCnt = cnt = Math.max(MINIMUM_OTHER_WINDOW_ID, ++this.windowCnt % 99);
         } else {
             cnt = forceId;
         }
