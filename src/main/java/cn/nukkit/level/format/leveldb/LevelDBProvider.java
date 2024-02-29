@@ -471,9 +471,10 @@ public class LevelDBProvider implements LevelProvider {
     }
 
     private void writeChunk(int chunkX, int chunkZ, FullChunk fullChunk) {
-        if (!(fullChunk instanceof LevelDBChunk chunk)) {
+        if (!(fullChunk instanceof LevelDBChunk)) {
             throw new ChunkException("Invalid Chunk class");
         }
+        LevelDBChunk chunk = (LevelDBChunk) fullChunk;
 
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);

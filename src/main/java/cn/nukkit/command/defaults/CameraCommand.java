@@ -148,31 +148,31 @@ public class CameraCommand extends VanillaCommand {
             return false;
         }
         switch (args[1]) {
-            case "clear" -> {
+            case "clear" :
                 pk.setClear(OptionalBoolean.of(true));
-            }
-            case "fade" -> {
+                break;
+            case "fade":
                 pk.setFadeInstruction(new CameraFadeInstruction());
-            }
-            case "fade-color" -> {
+                break;
+            case "fade-color":
                 pk.setFadeInstruction(new CameraFadeInstruction());
                 pk.getFadeInstruction().setColor(new Color(Float.parseFloat(args[3]), Float.parseFloat(args[4]), Float.parseFloat(args[5])));
-            }
-            case "fade-time-color" -> {
+                break;
+            case "fade-time-color":
                 pk.setFadeInstruction(new CameraFadeInstruction());
                 pk.getFadeInstruction().setColor(new Color(Float.parseFloat(args[3]), Float.parseFloat(args[4]), Float.parseFloat(args[5])));
                 pk.getFadeInstruction().setTimeData(new CameraFadeInstruction.TimeData(Float.parseFloat(args[7]), Float.parseFloat(args[8]), Float.parseFloat(args[9])));
-            }
-            case "set-default" -> {
+                break;
+            case "set-default":
                 CameraPreset preset = CameraPresetManager.getPreset(args[2]);
                 if (preset == null) {
                     sender.sendMessage(new TranslationContainer("nukkit.camera.unknown.preset"));
                     return false;
                 }
                 pk.setSetInstruction(new CameraSetInstruction());
-            }
-            case "set-rot" -> {
-                CameraPreset preset = CameraPresetManager.getPreset(args[2]);
+                break;
+            case "set-rot":
+                preset = CameraPresetManager.getPreset(args[2]);
                 if (preset == null) {
                     sender.sendMessage(new TranslationContainer("nukkit.camera.unknown.preset"));
                     return false;
@@ -180,9 +180,9 @@ public class CameraCommand extends VanillaCommand {
                 pk.setSetInstruction(new CameraSetInstruction());
                 pk.getSetInstruction().setPreset(preset);
                 pk.getSetInstruction().setRot(new Vector2f(0, 0));
-            }
-            case "set-pos" -> {
-                CameraPreset preset = CameraPresetManager.getPreset(args[2]);
+                break;
+            case "set-pos":
+                preset = CameraPresetManager.getPreset(args[2]);
                 if (preset == null) {
                     sender.sendMessage(new TranslationContainer("nukkit.camera.unknown.preset"));
                     return false;
@@ -191,21 +191,21 @@ public class CameraCommand extends VanillaCommand {
                 pk.setSetInstruction(new CameraSetInstruction());
                 pk.getSetInstruction().setPreset(preset);
                 pk.getSetInstruction().setPos(new Vector3f((float) position.getX(), (float) position.getY(), (float) position.getZ()));
-            }
-            case "set-pos-rot" -> {
-                CameraPreset preset = CameraPresetManager.getPreset(args[2]);
+                break;
+            case "set-pos-rot":
+                preset = CameraPresetManager.getPreset(args[2]);
                 if (preset == null) {
                     sender.sendMessage(new TranslationContainer("nukkit.camera.unknown.preset"));
                     return false;
                 }
-                Position position = new Position(Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]));
+                position = new Position(Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]));
                 pk.setSetInstruction(new CameraSetInstruction());
                 pk.getSetInstruction().setPreset(preset);
                 pk.getSetInstruction().setPos(new Vector3f((float) position.getX(), (float) position.getY(), (float) position.getZ()));
                 pk.getSetInstruction().setRot(new Vector2f(Float.parseFloat(args[6]), Float.parseFloat(args[7])));
-            }
-            case "set-ease-default" -> {
-                CameraPreset preset = CameraPresetManager.getPreset(args[2]);
+                break;
+            case "set-ease-default":
+                preset = CameraPresetManager.getPreset(args[2]);
                 if (preset == null) {
                     sender.sendMessage(new TranslationContainer("nukkit.camera.unknown.preset"));
                     return false;
@@ -214,49 +214,49 @@ public class CameraCommand extends VanillaCommand {
                 CameraEase easeType = CameraEase.valueOf(args[5].toUpperCase());
                 pk.setSetInstruction(new CameraSetInstruction());
                 pk.getSetInstruction().setEase(new CameraSetInstruction.EaseData(easeType, easeTime));
-            }
-            case "set-ease-rot" -> {
-                CameraPreset preset = CameraPresetManager.getPreset(args[2]);
+                break;
+            case "set-ease-rot":
+                preset = CameraPresetManager.getPreset(args[2]);
                 if (preset == null) {
                     sender.sendMessage(new TranslationContainer("nukkit.camera.unknown.preset"));
                     return false;
                 }
-                float easeTime = Float.parseFloat(args[4]);
-                CameraEase easeType = CameraEase.valueOf(args[5].toUpperCase());
+                easeTime = Float.parseFloat(args[4]);
+                easeType = CameraEase.valueOf(args[5].toUpperCase());
                 pk.setSetInstruction(new CameraSetInstruction());
                 pk.getSetInstruction().setPreset(preset);
                 pk.getSetInstruction().setEase(new CameraSetInstruction.EaseData(easeType, easeTime));
                 pk.getSetInstruction().setRot(new Vector2f(Float.parseFloat(args[7]), Float.parseFloat(args[8])));
-            }
-            case "set-ease-pos" -> {
-                CameraPreset preset = CameraPresetManager.getPreset(args[2]);
+                break;
+            case "set-ease-pos":
+                preset = CameraPresetManager.getPreset(args[2]);
                 if (preset == null) {
                     sender.sendMessage(new TranslationContainer("nukkit.camera.unknown.preset"));
                     return false;
                 }
-                float easeTime = Float.parseFloat(args[4]);
-                CameraEase easeType = CameraEase.valueOf(args[5].toUpperCase());
-                Vector3f position = new Vector3f(Float.parseFloat(args[6]), Float.parseFloat(args[7]), Float.parseFloat(args[8]));
+                easeTime = Float.parseFloat(args[4]);
+                easeType = CameraEase.valueOf(args[5].toUpperCase());
+                Vector3f vector3f = new Vector3f(Float.parseFloat(args[6]), Float.parseFloat(args[7]), Float.parseFloat(args[8]));
                 pk.setSetInstruction(new CameraSetInstruction());
                 pk.getSetInstruction().setPreset(preset);
                 pk.getSetInstruction().setEase(new CameraSetInstruction.EaseData(easeType, easeTime));
-                pk.getSetInstruction().setPos(position);
-            }
-            case "set-ease-pos-rot" -> {
-                CameraPreset preset = CameraPresetManager.getPreset(args[2]);
+                pk.getSetInstruction().setPos(vector3f);
+                break;
+            case "set-ease-pos-rot":
+                preset = CameraPresetManager.getPreset(args[2]);
                 if (preset == null) {
                     sender.sendMessage(new TranslationContainer("nukkit.camera.unknown.preset"));
                     return false;
                 }
-                float easeTime = Float.parseFloat(args[4]);
-                CameraEase easeType = CameraEase.valueOf(args[5].toUpperCase());
-                Vector3f position = new Vector3f(Float.parseFloat(args[6]), Float.parseFloat(args[7]), Float.parseFloat(args[8]));
+                easeTime = Float.parseFloat(args[4]);
+                easeType = CameraEase.valueOf(args[5].toUpperCase());
+                vector3f = new Vector3f(Float.parseFloat(args[6]), Float.parseFloat(args[7]), Float.parseFloat(args[8]));
                 pk.setSetInstruction(new CameraSetInstruction());
                 pk.getSetInstruction().setPreset(preset);
                 pk.getSetInstruction().setEase(new CameraSetInstruction.EaseData(easeType, easeTime));
-                pk.getSetInstruction().setPos(position);
+                pk.getSetInstruction().setPos(vector3f);
                 pk.getSetInstruction().setRot(new Vector2f(Float.parseFloat(args[9]), Float.parseFloat(args[10])));
-            }
+                break;
         }
         player.dataPacket(pk);
         player.sendMessage(new TranslationContainer("nukkit.camera.success", commandLabel));

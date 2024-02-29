@@ -890,7 +890,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     public static OK<?> registerCustomItem(@NotNull List<Class<? extends CustomItem>> itemClassList) {
         for (Class<? extends CustomItem> itemClass : itemClassList) {
             OK<?> result = registerCustomItem(itemClass);
-            if (!result.ok()) {
+            if (!result.isOk()) {
                 return result;
             }
         }

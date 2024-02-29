@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol.types.itemstack;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import lombok.var;
 
 public enum ContainerSlotType {
     ANVIL_INPUT(0),

@@ -1598,62 +1598,81 @@ public class BinaryStream {
     }
 
     protected ItemStackRequestAction readRequestActionData(int protocol, ItemStackRequestActionType type) {
-        return switch (type) {
-            case CRAFT_REPAIR_AND_DISENCHANT -> new CraftGrindstoneAction((int) getUnsignedVarInt(), getVarInt());
-            case CRAFT_LOOM -> new CraftLoomAction(getString());
-            case CRAFT_RECIPE_AUTO -> new AutoCraftRecipeAction(
-                    (int) getUnsignedVarInt(), getByte(), Collections.emptyList()
-            );
-            case CRAFT_RESULTS_DEPRECATED -> new CraftResultsDeprecatedAction(
-                    getArray(Item.class, (s) -> s.getSlot(protocol)),
-                    getByte()
-            );
-            case MINE_BLOCK -> new MineBlockAction(getVarInt(), getVarInt(), getVarInt());
-            case CRAFT_RECIPE_OPTIONAL -> new CraftRecipeOptionalAction((int) getUnsignedVarInt(), getLInt());
-            case TAKE -> new TakeAction(
-                    getByte(),
-                    readStackRequestSlotInfo(),
-                    readStackRequestSlotInfo()
-            );
-            case PLACE -> new PlaceAction(
-                    getByte(),
-                    readStackRequestSlotInfo(),
-                    readStackRequestSlotInfo()
-            );
-            case SWAP -> new SwapAction(
-                    readStackRequestSlotInfo(),
-                    readStackRequestSlotInfo()
-            );
-            case DROP -> new DropAction(
-                    getByte(),
-                    readStackRequestSlotInfo(),
-                    getBoolean()
-            );
-            case DESTROY -> new DestroyAction(
-                    getByte(),
-                    readStackRequestSlotInfo()
-            );
-            case CONSUME -> new ConsumeAction(
-                    getByte(),
-                    readStackRequestSlotInfo()
-            );
-            case CREATE -> new CreateAction(
-                    getByte()
-            );
-            case LAB_TABLE_COMBINE -> new LabTableCombineAction();
-            case BEACON_PAYMENT -> new BeaconPaymentAction(
-                    getVarInt(),
-                    getVarInt()
-            );
-            case CRAFT_RECIPE -> new CraftRecipeAction(
-                    (int) getUnsignedVarInt()
-            );
-            case CRAFT_CREATIVE -> new CraftCreativeAction(
-                    (int) getUnsignedVarInt()
-            );
-            case CRAFT_NON_IMPLEMENTED_DEPRECATED -> new CraftNonImplementedAction();
-            default -> throw new UnsupportedOperationException("Unhandled stack request action type: " + type);
-        };
+        switch (type) {
+            case CRAFT_REPAIR_AND_DISENCHANT:
+                return new CraftGrindstoneAction((int) getUnsignedVarInt(), getVarInt());
+            case CRAFT_LOOM:
+                return new CraftLoomAction(getString());
+            case CRAFT_RECIPE_AUTO:
+                return new AutoCraftRecipeAction(
+                        (int) getUnsignedVarInt(), getByte(), Collections.emptyList()
+                );
+            case CRAFT_RESULTS_DEPRECATED:
+                return new CraftResultsDeprecatedAction(
+                        getArray(Item.class, (s) -> s.getSlot(protocol)),
+                        getByte()
+                );
+            case MINE_BLOCK:
+                return new MineBlockAction(getVarInt(), getVarInt(), getVarInt());
+            case CRAFT_RECIPE_OPTIONAL:
+                return new CraftRecipeOptionalAction((int) getUnsignedVarInt(), getLInt());
+            case TAKE:
+                return new TakeAction(
+                        getByte(),
+                        readStackRequestSlotInfo(),
+                        readStackRequestSlotInfo()
+                );
+            case PLACE:
+                return new PlaceAction(
+                        getByte(),
+                        readStackRequestSlotInfo(),
+                        readStackRequestSlotInfo()
+                );
+            case SWAP:
+                return new SwapAction(
+                        readStackRequestSlotInfo(),
+                        readStackRequestSlotInfo()
+                );
+            case DROP:
+                return new DropAction(
+                        getByte(),
+                        readStackRequestSlotInfo(),
+                        getBoolean()
+                );
+            case DESTROY:
+                return new DestroyAction(
+                        getByte(),
+                        readStackRequestSlotInfo()
+                );
+            case CONSUME:
+                return new ConsumeAction(
+                        getByte(),
+                        readStackRequestSlotInfo()
+                );
+            case CREATE:
+                return new CreateAction(
+                        getByte()
+                );
+            case LAB_TABLE_COMBINE:
+                return new LabTableCombineAction();
+            case BEACON_PAYMENT:
+                return new BeaconPaymentAction(
+                        getVarInt(),
+                        getVarInt()
+                );
+            case CRAFT_RECIPE:
+                return new CraftRecipeAction(
+                        (int) getUnsignedVarInt()
+                );
+            case CRAFT_CREATIVE:
+                return new CraftCreativeAction(
+                        (int) getUnsignedVarInt()
+                );
+            case CRAFT_NON_IMPLEMENTED_DEPRECATED:
+                return new CraftNonImplementedAction();
+            default:
+                throw new UnsupportedOperationException("Unhandled stack request action type: " + type);
+        }
     }
 
     private ItemStackRequestSlotData readStackRequestSlotInfo() {

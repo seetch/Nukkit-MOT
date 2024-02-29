@@ -243,7 +243,8 @@ public class LevelDBChunk extends BaseChunk {
     @Override
     public int getBlockSkyLight(int x, int y, int z) {
         ChunkSection section = this.getSection(y >> 4);
-        if (section instanceof LevelDBChunkSection levelDBChunkSection) {
+        if (section instanceof LevelDBChunkSection) {
+            LevelDBChunkSection levelDBChunkSection = (LevelDBChunkSection) section;
             if (levelDBChunkSection.skyLight != null) {
                 return section.getBlockSkyLight(x, y & 0x0f, z);
             } else if (!levelDBChunkSection.hasSkyLight) {
@@ -266,7 +267,8 @@ public class LevelDBChunk extends BaseChunk {
     @Override
     public int getBlockLight(int x, int y, int z) {
         ChunkSection section = this.getSection(y >> 4);
-        if (section instanceof LevelDBChunkSection levelDBChunkSection) {
+        if (section instanceof LevelDBChunkSection) {
+            LevelDBChunkSection levelDBChunkSection = (LevelDBChunkSection) section;
             if (levelDBChunkSection.blockLight != null) {
                 return section.getBlockLight(x, y & 0x0f, z);
             } else if (!levelDBChunkSection.hasBlockLight) {

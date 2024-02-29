@@ -171,7 +171,8 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
 
         InventoryMoveItemEvent event;
 
-        if (be instanceof BlockEntityFurnace furnace) {
+        if (be instanceof BlockEntityFurnace) {
+            BlockEntityFurnace furnace = (BlockEntityFurnace) be;
             FurnaceInventory targetInv = furnace.getInventory();
             if (targetInv.isFull()) {
                 return false;

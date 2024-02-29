@@ -33,27 +33,57 @@ public class HudCommand extends VanillaCommand {
             return false;
         }
 
-        HudVisibility visibility = switch (args[1]) {
-            case "hide" -> HudVisibility.HIDE;
-            case "reset" -> HudVisibility.RESET;
-            default -> null;
-        };
+        HudVisibility visibility;
+        switch (args[1]) {
+            case "hide":
+                visibility = HudVisibility.HIDE;
+                break;
+            case "reset":
+                visibility = HudVisibility.RESET;
+                break;
+            default:
+                visibility = null;
+                break;
+        }
 
-        HudElement element = switch (args[2]) {
-            case "armor" -> HudElement.ARMOR;
-            case "air_bubbles_bar" -> HudElement.AIR_BUBBLES_BAR;
-            case "crosshair" -> HudElement.CROSSHAIR;
-            case "food_bar" -> HudElement.FOOD_BAR;
-            case "health" -> HudElement.HEALTH;
-            case "hotbar" -> HudElement.HOTBAR;
-            case "paper_doll" -> HudElement.PAPER_DOLL;
-            case "tool_tips" -> HudElement.TOOL_TIPS;
-            case "progress_bar" -> HudElement.PROGRESS_BAR;
-            case "touch_controls" -> HudElement.TOUCH_CONTROLS;
-            case "vehicle_health" -> HudElement.VEHICLE_HEALTH;
-
-            default -> null;
-        };
+        HudElement element;
+        switch (args[2]) {
+            case "armor":
+                element = HudElement.ARMOR;
+                break;
+            case "air_bubbles_bar":
+                element =  HudElement.AIR_BUBBLES_BAR;
+                break;
+            case "crosshair":
+                element =  HudElement.CROSSHAIR;
+                break;
+            case "food_bar":
+                element =  HudElement.FOOD_BAR;
+                break;
+            case "health":
+                element =  HudElement.HEALTH;
+                break;
+            case "hotbar":
+                element =  HudElement.HOTBAR;
+                break;
+            case "paper_doll":
+                element =  HudElement.PAPER_DOLL;
+                break;
+            case "tool_tips":
+                element =  HudElement.TOOL_TIPS;
+                break;
+            case "progress_bar":
+                element =  HudElement.PROGRESS_BAR;
+                break;
+            case "touch_controls":
+                element =  HudElement.TOUCH_CONTROLS;
+                break;
+            case "vehicle_health":
+                element =  HudElement.VEHICLE_HEALTH;
+                break;
+            default:
+                element = null;
+        }
 
         if(visibility == null || element == null) {
             sender.sendMessage("Invalid visibility or element");

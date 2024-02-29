@@ -58,9 +58,11 @@ public class Utils {
      * @return 是否已实现
      */
     public static boolean hasItemOrBlock(Object id) {
-        if (id instanceof Number number) {
+        if (id instanceof Number) {
+            Number number = (Number) id;
             return hasItemOrBlock(number.intValue());
-        } else if (id instanceof String string) {
+        } else if (id instanceof String) {
+            String string = (String) id;
             return hasItemOrBlock(string);
         }
         throw new IllegalArgumentException("id must be a number or a string");

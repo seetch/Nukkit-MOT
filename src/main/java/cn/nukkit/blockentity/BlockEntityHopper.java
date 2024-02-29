@@ -251,7 +251,8 @@ public class BlockEntityHopper extends BlockEntitySpawnableContainer implements 
 
         InventoryMoveItemEvent event;
 
-        if (be instanceof BlockEntityFurnace furnace) {
+        if (be instanceof BlockEntityFurnace) {
+            BlockEntityFurnace furnace = (BlockEntityFurnace) be;
             FurnaceInventory targetInv = furnace.getInventory();
             if (targetInv.isFull()) {
                 return false;

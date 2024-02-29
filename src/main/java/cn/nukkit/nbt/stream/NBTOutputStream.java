@@ -4,6 +4,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.VarInt;
+import lombok.var;
 
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -172,22 +173,34 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
             throw new IllegalArgumentException("Reached depth limit");
         } else {
             switch (type) {
-                case Tag.TAG_Byte -> this.writeByte((Integer) tag.parseValue());
-                case Tag.TAG_Short -> this.writeShort((Integer) tag.parseValue());
-                case Tag.TAG_Int -> this.writeInt((Integer) tag.parseValue());
-                case Tag.TAG_Long -> this.writeLong((Long) tag.parseValue());
-                case Tag.TAG_Float -> this.writeFloat((Float) tag.parseValue());
-                case Tag.TAG_Double -> this.writeDouble((Double) tag.parseValue());
-                case Tag.TAG_Byte_Array -> {
+                case Tag.TAG_Byte:
+                    this.writeByte((Integer) tag.parseValue());
+                    break;
+                case Tag.TAG_Short:
+                    this.writeShort((Integer) tag.parseValue());
+                    break;
+                case Tag.TAG_Int:
+                    this.writeInt((Integer) tag.parseValue());
+                    break;
+                case Tag.TAG_Long:
+                    this.writeLong((Long) tag.parseValue());
+                    break;
+                case Tag.TAG_Float:
+                    this.writeFloat((Float) tag.parseValue());
+                    break;
+                case Tag.TAG_Double:
+                    this.writeDouble((Double) tag.parseValue());
+                    break;
+                case Tag.TAG_Byte_Array:
                     byte[] byteArray = (byte[]) tag.parseValue();
                     this.writeInt(byteArray.length);
                     this.write(byteArray);
-                }
-                case Tag.TAG_String -> {
+                break;
+                case Tag.TAG_String:
                     String string = (String) tag.parseValue();
                     this.writeUTF(string);
-                }
-                case Tag.TAG_Compound -> {
+                break;
+                case Tag.TAG_Compound:
                     CompoundTag map = (CompoundTag) tag;
                     for (var e : map.getTags().entrySet()) {
                         this.writeByte(e.getValue().getId());
@@ -195,8 +208,8 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
                         this.serialize(e.getValue(), e.getValue().getId(), maxDepth - 1);
                     }
                     this.writeByte(0);// End tag
-                }
-                case Tag.TAG_List -> {
+                break;
+                case Tag.TAG_List: {
                     ListTag<? extends Tag> list = (ListTag<? extends Tag>) tag;
                     this.writeByte(list.type);
                     this.writeInt(list.size());
@@ -204,7 +217,8 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
                         this.serialize(t, list.type, maxDepth - 1);
                     }
                 }
-                default -> {}
+                default:
+                    break;
             }
         }
     }

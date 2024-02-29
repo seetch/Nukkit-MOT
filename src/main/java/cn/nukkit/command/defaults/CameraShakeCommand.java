@@ -33,7 +33,7 @@ public class CameraShakeCommand extends VanillaCommand {
             return false;
         }
         switch (args[0]) {
-            case "add" -> {
+            case "add":
                 if (args.length != 5) {
                     return false;
                 }
@@ -41,10 +41,16 @@ public class CameraShakeCommand extends VanillaCommand {
                 float intensity = Float.parseFloat(args[2]);
                 float second = Float.parseFloat(args[3]);
                 String type = args[4];
-                CameraShakePacket.CameraShakeType shakeType = switch (type) {
-                    case "positional" -> CameraShakePacket.CameraShakeType.POSITIONAL;
-                    case "rotational" -> CameraShakePacket.CameraShakeType.ROTATIONAL;
-                    default -> null;
+                CameraShakePacket.CameraShakeType shakeType;
+                switch (type) {
+                    case "positional":
+                        shakeType = CameraShakePacket.CameraShakeType.POSITIONAL;
+                        break;
+                    case "rotational":
+                        shakeType = CameraShakePacket.CameraShakeType.ROTATIONAL;
+                        break;
+                    default:
+                        shakeType = null;
                 };
                 CameraShakePacket packet = new CameraShakePacket();
                 packet.intensity = intensity;
@@ -59,19 +65,19 @@ public class CameraShakeCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("nukkit.camerashake.unknownPlayer"));
                     return false;
                 }
-            }
-            case "stop" -> {
+                break;
+            case "stop":
                 if (args.length != 2) {
                     return false;
                 }
-                String players_str = args[1];
-                CameraShakePacket packet = new CameraShakePacket();
+                players_str = args[1];
+                packet = new CameraShakePacket();
                 packet.shakeAction = CameraShakePacket.CameraShakeAction.STOP;
                 //avoid NPE
                 packet.intensity = -1;
                 packet.duration = -1;
                 packet.shakeType = CameraShakePacket.CameraShakeType.POSITIONAL;
-                Player player = Server.getInstance().getPlayer(players_str);
+                player = Server.getInstance().getPlayer(players_str);
                 if (player != null) {
                     player.dataPacket(packet);
                     sender.sendMessage(new TranslationContainer("nukkit.camerashake.successStop", players_str));
@@ -79,7 +85,7 @@ public class CameraShakeCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("nukkit.camerashake.unknownPlayer"));
                     return false;
                 }
-            }
+                break;
         }
         return true;
     }

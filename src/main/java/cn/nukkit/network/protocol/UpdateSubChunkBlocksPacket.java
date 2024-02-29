@@ -3,6 +3,7 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.network.protocol.types.BlockChangeEntry;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
+import lombok.var;
 
 import java.util.List;
 
@@ -41,19 +42,19 @@ public class UpdateSubChunkBlocksPacket extends DataPacket {
         putVarInt(chunkZ);
         putUnsignedVarInt(standardBlocks.size());
         for (final var each : standardBlocks) {
-            putBlockVector3(each.blockPos());
-            putUnsignedVarInt(each.runtimeID());
-            putUnsignedVarInt(each.updateFlags());
-            putUnsignedVarLong(each.messageEntityID());
-            putUnsignedVarInt(each.messageType().ordinal());
+            putBlockVector3(each.getBlockPos());
+            putUnsignedVarInt(each.getRuntimeID());
+            putUnsignedVarInt(each.getUpdateFlags());
+            putUnsignedVarLong(each.getMessageEntityID());
+            putUnsignedVarInt(each.getMessageType().ordinal());
         }
         putUnsignedVarInt(extraBlocks.size());
         for (final var each : extraBlocks) {
-            putBlockVector3(each.blockPos());
-            putUnsignedVarInt(each.runtimeID());
-            putUnsignedVarInt(each.updateFlags());
-            putUnsignedVarLong(each.messageEntityID());
-            putUnsignedVarInt(each.messageType().ordinal());
+            putBlockVector3(each.getBlockPos());
+            putUnsignedVarInt(each.getRuntimeID());
+            putUnsignedVarInt(each.getUpdateFlags());
+            putUnsignedVarLong(each.getMessageEntityID());
+            putUnsignedVarInt(each.getMessageType().ordinal());
         }
     }
 
@@ -80,7 +81,8 @@ public class UpdateSubChunkBlocksPacket extends DataPacket {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UpdateSubChunkBlocksPacket that)) return false;
+        if (!(o instanceof UpdateSubChunkBlocksPacket)) return false;
+        UpdateSubChunkBlocksPacket that = (UpdateSubChunkBlocksPacket) o;
         return chunkX == that.chunkX && chunkY == that.chunkY && chunkZ == that.chunkZ && standardBlocks.equals(that.standardBlocks) && extraBlocks.equals(that.extraBlocks);
     }
 

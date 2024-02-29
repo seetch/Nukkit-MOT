@@ -5,6 +5,7 @@ import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -26,7 +27,7 @@ public class ItemStackRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-        requests.addAll(List.of(getArray(ItemStackRequest.class, BinaryStream::readItemStackRequest)));
+        requests.addAll(Arrays.asList(getArray(ItemStackRequest.class, BinaryStream::readItemStackRequest)));
     }
 
     @Override

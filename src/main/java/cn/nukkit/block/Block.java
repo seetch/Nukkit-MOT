@@ -926,7 +926,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     private double toolBreakTimeBonus0(Item item) {
-        if (item instanceof ItemCustomTool itemCustomTool && itemCustomTool.getSpeed() != null) {
+        if (item instanceof ItemCustomTool && ((ItemCustomTool) item).getSpeed() != null) {
+            ItemCustomTool itemCustomTool = (ItemCustomTool) item;
             return customToolBreakTimeBonus(customToolType(item), itemCustomTool.getSpeed());
         }
         return toolBreakTimeBonus0(toolType0(item, getId()), item.getTier(), this.getId() == BlockID.WOOL, this.getId() == BlockID.COBWEB);
