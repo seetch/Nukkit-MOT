@@ -84,7 +84,7 @@ public class Utils {
     public static int[] getEmptyDamageArray() {
         return new int[] { 0, 0, 0, 0 };
     }
-
+    
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     }
@@ -550,6 +550,8 @@ public class Utils {
                 return "1.20.50";
             case ProtocolInfo.v1_20_60:
                 return "1.20.60";
+            case ProtocolInfo.v1_20_70:
+                return "1.20.70";
             //TODO Multiversion 添加新版本支持时修改这里
             default:
                 throw new IllegalStateException("Invalid protocol: " + protocol);

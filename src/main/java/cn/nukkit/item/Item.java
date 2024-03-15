@@ -484,6 +484,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     private static final List<Item> creative622 = new ObjectArrayList<>();
     private static final List<Item> creative630 = new ObjectArrayList<>();
     private static final List<Item> creative649 = new ObjectArrayList<>();
+    private static final List<Item> creative662 = new ObjectArrayList<>();
 
     @SuppressWarnings("unchecked")
     private static void initCreativeItems() {
@@ -521,6 +522,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         registerCreativeItemsNew(ProtocolInfo.v1_20_40, ProtocolInfo.v1_20_40, creative622);
         registerCreativeItemsNew(ProtocolInfo.v1_20_50, ProtocolInfo.v1_20_50, creative630);
         registerCreativeItemsNew(ProtocolInfo.v1_20_60, ProtocolInfo.v1_20_60, creative649);
+        registerCreativeItemsNew(ProtocolInfo.v1_20_70, ProtocolInfo.v1_20_70, creative662);
         //TODO Multiversion 添加新版本支持时修改这里
     }
 
@@ -583,6 +585,8 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         Item.creative618.clear();
         Item.creative622.clear();
         Item.creative630.clear();
+        Item.creative649.clear();
+        Item.creative662.clear();
         //TODO Multiversion 添加新版本支持时修改这里
     }
 
@@ -593,6 +597,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
 
     public static ArrayList<Item> getCreativeItems(int protocol) {
         switch (protocol) {
+            case v1_1_0: //TODO check
             case v1_2_0:
             case v1_2_5_11:
             case v1_2_5:
@@ -691,6 +696,8 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                 return new ArrayList<>(Item.creative630);
             case v1_20_60:
                 return new ArrayList<>(Item.creative649);
+            case v1_20_70:
+                return new ArrayList<>(Item.creative662);
             // TODO Multiversion
             default:
                 throw new IllegalArgumentException("Tried to get creative items for unsupported protocol version: " + protocol);
@@ -790,6 +797,9 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                 break;
             case v1_20_60:
                 Item.creative649.add(item.clone());
+                break;
+            case v1_20_70:
+                Item.creative662.add(item.clone());
                 break;
             // TODO Multiversion
             default:
@@ -961,6 +971,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         registerCustomItem(customItem, v1_20_40, addCreativeItem, v1_20_40);
         registerCustomItem(customItem, v1_20_50, addCreativeItem, v1_20_50);
         registerCustomItem(customItem, v1_20_60, addCreativeItem, v1_20_60);
+        registerCustomItem(customItem, v1_20_70, addCreativeItem, v1_20_70);
         //TODO Multiversion 添加新版本支持时修改这里
 
         return new OK<Void>(true);
@@ -998,6 +1009,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             deleteCustomItem(customItem, v1_20_40, v1_20_40);
             deleteCustomItem(customItem, v1_20_50, v1_20_50);
             deleteCustomItem(customItem, v1_20_60, v1_20_60);
+            deleteCustomItem(customItem, v1_20_70, v1_20_70);
             //TODO Multiversion 添加新版本支持时修改这里
         }
     }
@@ -1748,6 +1760,10 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
      * @return item changed
      */
     public boolean onClickAir(Player player, Vector3 directionVector) {
+        return false;
+    }
+
+    public boolean canRelease() {
         return false;
     }
 
