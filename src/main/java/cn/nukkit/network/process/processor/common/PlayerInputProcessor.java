@@ -36,7 +36,8 @@ public class PlayerInputProcessor extends DataPacketProcessor<PlayerInputPacket>
         if (player.riding != null && (moveVecX != 0 || moveVecY != 0)) {
             moveVecX = NukkitMath.clamp(pk.motionX, -1, 1);
             moveVecY = NukkitMath.clamp(pk.motionY, -1, 1);
-            if (player.riding instanceof EntityControllable controllable) {
+            if (player.riding instanceof EntityControllable) {
+                EntityControllable controllable = (EntityControllable) player.riding;
                 controllable.onPlayerInput(player, moveVecX, moveVecY);
             }
         }

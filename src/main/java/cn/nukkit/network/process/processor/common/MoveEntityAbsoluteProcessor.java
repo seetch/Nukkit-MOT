@@ -24,7 +24,8 @@ public class MoveEntityAbsoluteProcessor extends DataPacketProcessor<MoveEntityA
         if (!player.spawned || player.riding == null || player.riding.getId() != pk.eid || !player.riding.isControlling(player)) {
             return;
         }
-        if (player.riding instanceof EntityBoat entityBoat) {
+        if (player.riding instanceof EntityBoat) {
+            EntityBoat entityBoat = (EntityBoat) player.riding;
             if (player.temporalVector.setComponents(pk.x, pk.y, pk.z).distanceSquared(player.riding) < 1000) {
                 entityBoat.onInput(pk.x, pk.y, pk.z, pk.headYaw);
             }

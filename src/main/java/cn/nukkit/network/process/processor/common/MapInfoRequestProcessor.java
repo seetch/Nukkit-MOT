@@ -30,14 +30,16 @@ public class MapInfoRequestProcessor extends DataPacketProcessor<MapInfoRequestP
         ItemMap mapItem = null;
 
         for (Item item1 : player.getOffhandInventory().getContents().values()) {
-            if (item1 instanceof ItemMap map && map.getMapId() == pk.mapId) {
+            if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.mapId) {
+                ItemMap map = (ItemMap) item1;
                 mapItem = map;
             }
         }
 
         if (mapItem == null) {
             for (Item item1 : player.getInventory().getContents().values()) {
-                if (item1 instanceof ItemMap map && map.getMapId() == pk.mapId) {
+                if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.mapId) {
+                    ItemMap map = (ItemMap) item1;
                     mapItem = map;
                 }
             }
@@ -45,7 +47,8 @@ public class MapInfoRequestProcessor extends DataPacketProcessor<MapInfoRequestP
 
         if (mapItem == null) {
             for (BlockEntity be : player.level.getBlockEntities().values()) {
-                if (be instanceof BlockEntityItemFrame itemFrame1) {
+                if (be instanceof BlockEntityItemFrame) {
+                    BlockEntityItemFrame itemFrame1 = (BlockEntityItemFrame) be;
 
                     if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.mapId) {
                         ((ItemMap) itemFrame1.getItem()).sendImage(player);

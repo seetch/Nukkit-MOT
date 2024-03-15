@@ -60,6 +60,12 @@ public class Nukkit {
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
+        log.error("");
+
+        System.exit(0);
+    }
+
+    public static void main0(String[] args) {
 
         System.setProperty("java.net.preferIPv4Stack" , "true");
         System.setProperty("log4j.skipJansi", "false");
