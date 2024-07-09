@@ -52,34 +52,40 @@ public class HudCommand extends VanillaCommand {
                 element = HudElement.ARMOR;
                 break;
             case "air_bubbles_bar":
-                element =  HudElement.AIR_BUBBLES_BAR;
+                element = HudElement.AIR_BUBBLES_BAR;
                 break;
             case "crosshair":
-                element =  HudElement.CROSSHAIR;
+                element = HudElement.CROSSHAIR;
                 break;
             case "food_bar":
-                element =  HudElement.FOOD_BAR;
+                element = HudElement.FOOD_BAR;
                 break;
             case "health":
-                element =  HudElement.HEALTH;
+                element = HudElement.HEALTH;
                 break;
             case "hotbar":
-                element =  HudElement.HOTBAR;
+                element = HudElement.HOTBAR;
                 break;
             case "paper_doll":
-                element =  HudElement.PAPER_DOLL;
+                element = HudElement.PAPER_DOLL;
                 break;
             case "tool_tips":
-                element =  HudElement.TOOL_TIPS;
+                element = HudElement.TOOL_TIPS;
                 break;
             case "progress_bar":
-                element =  HudElement.PROGRESS_BAR;
+                element = HudElement.PROGRESS_BAR;
                 break;
             case "touch_controls":
-                element =  HudElement.TOUCH_CONTROLS;
+                element = HudElement.TOUCH_CONTROLS;
                 break;
             case "vehicle_health":
-                element =  HudElement.VEHICLE_HEALTH;
+                element = HudElement.VEHICLE_HEALTH;
+                break;
+            case "effects_bar":
+                element = HudElement.EFFECTS_BAR;
+                break;
+            case "item_text_popup":
+                element = HudElement.ITEM_TEXT_POPUP;
                 break;
             default:
                 element = null;

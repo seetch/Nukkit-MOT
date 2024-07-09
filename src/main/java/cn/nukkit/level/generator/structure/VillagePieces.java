@@ -22,6 +22,7 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.plugin.InternalPlugin;
 import cn.nukkit.utils.DyeColor;
 import com.google.common.collect.Lists;
 
@@ -1379,7 +1380,7 @@ public final class VillagePieces {
 			if (boundingBox.isInside(vec)) {
 				final BaseFullChunk chunk = level.getChunk(vec.x >> 4, vec.z >> 4);
 				if (chunk != null) {
-					Server.getInstance().getScheduler().scheduleTask(new BlockActorSpawnTask(chunk.getProvider().getLevel(),
+					Server.getInstance().getScheduler().scheduleTask(InternalPlugin.INSTANCE, new BlockActorSpawnTask(chunk.getProvider().getLevel(),
 						BlockEntity.getDefaultCompound(vec.asVector3(), BlockEntity.FURNACE)));
 				}
 			}
@@ -1387,7 +1388,7 @@ public final class VillagePieces {
 			if (boundingBox.isInside(vec)) {
 				final BaseFullChunk chunk = level.getChunk(vec.x >> 4, vec.z >> 4);
 				if (chunk != null) {
-					Server.getInstance().getScheduler().scheduleTask(new BlockActorSpawnTask(chunk.getProvider().getLevel(),
+					Server.getInstance().getScheduler().scheduleTask(InternalPlugin.INSTANCE, new BlockActorSpawnTask(chunk.getProvider().getLevel(),
 						BlockEntity.getDefaultCompound(vec.asVector3(), BlockEntity.FURNACE)));
 				}
 			}
@@ -1418,7 +1419,7 @@ public final class VillagePieces {
 						final ListTag<CompoundTag> itemList = new ListTag<>("Items");
 						VillageBlacksmithChest.get().create(itemList, random);
 						nbt.putList(itemList);
-						Server.getInstance().getScheduler().scheduleTask(new BlockActorSpawnTask(chunk.getProvider().getLevel(), nbt));
+						Server.getInstance().getScheduler().scheduleTask(InternalPlugin.INSTANCE, new BlockActorSpawnTask(chunk.getProvider().getLevel(), nbt));
 					}
 				}
 			}
@@ -1607,7 +1608,7 @@ public final class VillagePieces {
 						final ListTag<CompoundTag> itemList = new ListTag<>("Items");
 						VillageTwoRoomHouseChest.get().create(itemList, random);
 						nbt.putList(itemList);
-						Server.getInstance().getScheduler().scheduleTask(new BlockActorSpawnTask(chunk.getProvider().getLevel(), nbt));
+						Server.getInstance().getScheduler().scheduleTask(InternalPlugin.INSTANCE, new BlockActorSpawnTask(chunk.getProvider().getLevel(), nbt));
 					}
 				}
 			}

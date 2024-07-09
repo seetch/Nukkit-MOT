@@ -76,6 +76,7 @@ public abstract class EntitySwimming extends BaseEntity {
         }
     }
 
+    @Override
     public Vector3 updateMove(int tickDiff) {
         if (!this.isInTickingRange()) {
             return null;

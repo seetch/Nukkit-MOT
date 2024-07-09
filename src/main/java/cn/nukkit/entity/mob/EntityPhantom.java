@@ -50,6 +50,7 @@ public class EntityPhantom extends EntityFlyingMob implements EntitySmite {
         this.setDamage(new int[] { 0, 4, 6, 9 });
     }
 
+    @Override
     public boolean targetOption(EntityCreature creature, double distance) {
         if (creature instanceof Player) {
             Player player = (Player) creature;

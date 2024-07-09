@@ -58,6 +58,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
         return BlockEntityCauldron.class;
     }
 
+    @Override
     public String getName() {
         return "Cauldron Block";
     }
@@ -159,6 +160,13 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                         } else { // lava bucket
                             if (!isEmpty()) {
                                 clearWithFizz(cauldron);
+                            } else {
+                                BlockCauldronLava blockCauldronLava = new BlockCauldronLava(14);
+                                blockCauldronLava.setFillLevel(3);
+                                this.level.setBlock(this, blockCauldronLava, true, true);
+                                cauldron.clearCustomColor();
+                                this.getLevel().addSoundToViewers(this, Sound.BUCKET_EMPTY_LAVA);
+                                break;
                             }
                         }
                         //this.update();
@@ -371,10 +379,12 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
         return new ItemCauldron();
     }
 
+    @Override
     public boolean hasComparatorInputOverride() {
         return true;
     }
 
+    @Override
     public int getComparatorInputOverride() {
         return getFillLevel();
     }

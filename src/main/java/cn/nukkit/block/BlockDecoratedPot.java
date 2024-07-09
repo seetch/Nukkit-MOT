@@ -43,6 +43,7 @@ public class BlockDecoratedPot extends BlockTransparentMeta implements Faceable,
         return BlockEntity.DECORATED_POT;
     }
 
+    @Override
     public String getName() {
         return "Decorated Pot";
     }

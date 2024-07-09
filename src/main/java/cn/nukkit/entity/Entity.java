@@ -81,7 +81,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_OWNER_EID = 5; //long
     public static final int DATA_TARGET_EID = 6; //long
     public static final int DATA_AIR = 7; //short
-    public static final int DATA_POTION_COLOR = 8; //int (ARGB!)
+    public static final int DATA_EFFECT_COLOR = 8, DATA_POTION_COLOR = DATA_EFFECT_COLOR; //int (ARGB!)
     public static final int DATA_POTION_AMBIENT = 9; //byte
     public static final int DATA_JUMP_DURATION = 10; //long
     public static final int DATA_HURT_TIME = 11; //int (minecart/boat)
@@ -108,7 +108,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FISH_X = 33;
     public static final int DATA_FISH_Z = 34;
     public static final int DATA_FISH_ANGLE = 35;
-    public static final int DATA_POTION_AUX_VALUE = 36; //short
+    public static final int DATA_AUX_VALUE_DATA = 36, DATA_POTION_AUX_VALUE = DATA_AUX_VALUE_DATA; //short
     public static final int DATA_LEAD_HOLDER_EID = 37; //long
     public static final int DATA_SCALE = 38; //float
     public static final int DATA_HAS_NPC_COMPONENT = 39; //byte
@@ -171,19 +171,19 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAGS_EXTENDED = 92, DATA_FLAGS2 = DATA_FLAGS_EXTENDED; //long (extended data flags)
     public static final int DATA_LAYING_AMOUNT = 93;
     public static final int DATA_LAYING_AMOUNT_PREVIOUS = 94;
-    public static final int DATA_DURATION = 95;
-    public static final int DATA_SPAWN_TIME = 96;
-    public static final int DATA_CHANGE_RATE = 97;
-    public static final int DATA_CHANGE_ON_PICKUP = 98;
-    public static final int DATA_PICKUP_COUNT = 99;
-    public static final int DATA_INTERACTIVE_TAG = 100; //string (button text)
+    public static final int DATA_AREA_EFFECT_CLOUD_DURATION = 95, DATA_DURATION = DATA_AREA_EFFECT_CLOUD_DURATION; // int
+    public static final int DATA_AREA_EFFECT_CLOUD_SPAWN_TIME = 96, DATA_SPAWN_TIME = DATA_AREA_EFFECT_CLOUD_SPAWN_TIME; // int
+    public static final int DATA_AREA_EFFECT_CLOUD_CHANGE_RATE = 97, DATA_CHANGE_RATE = DATA_AREA_EFFECT_CLOUD_CHANGE_RATE; // float
+    public static final int DATA_AREA_EFFECT_CLOUD_CHANGE_ON_PICKUP = 98, DATA_CHANGE_ON_PICKUP = DATA_AREA_EFFECT_CLOUD_CHANGE_ON_PICKUP; // float
+    public static final int DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT = 99, DATA_PICKUP_COUNT = DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT; //int
+    public static final int DATA_INTERACTIVE_TAG = 100; // string (button text)
     public static final int DATA_TRADE_TIER = 101;
     public static final int DATA_MAX_TRADE_TIER = 102;
     public static final int DATA_TRADE_EXPERIENCE = 103;
     public static final int DATA_SKIN_ID = 104; // int
     public static final int DATA_SPAWNING_FRAMES = 105;
-    public static final int DATA_COMMAND_BLOCK_TICK_DELAY = 106; //int
-    public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = 107; //byte
+    public static final int DATA_COMMAND_BLOCK_TICK_DELAY = 106; // int
+    public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = 107; // byte
     public static final int DATA_AMBIENT_SOUND_INTERVAL = 108;
     public static final int DATA_AMBIENT_SOUND_INTERVAL_RANGE = 109;
     public static final int DATA_AMBIENT_SOUND_EVENT_NAME = 110;
@@ -324,6 +324,10 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_FEELING_HAPPY = 112;
     public static final int DATA_FLAG_SEARCHING = 113;
     public static final int DATA_FLAG_CRAWLING = 114;
+    public static final int DATA_TIMER_FLAG_1 = 115;
+    public static final int DATA_TIMER_FLAG_2 = 116;
+    public static final int DATA_TIMER_FLAG_3 = 117;
+    public static final int DATA_FLAG_BODY_ROTATION_BLOCKED = 118;
 
     public static final double STEP_CLIP_MULTIPLIER = 0.4;
     public static final int ENTITY_COORDINATES_MAX_VALUE = 2100000000;
@@ -463,6 +467,8 @@ public abstract class Entity extends Location implements Metadatable {
     private volatile boolean initEntity;
 
     protected volatile boolean saveWithChunk = true;
+
+    protected boolean passThroughBarrier = false;
 
     private Map<String, Integer> intProperties = new LinkedHashMap<>();
     private Map<String, Float> floatProperties = new LinkedHashMap<>();
@@ -897,9 +903,23 @@ public abstract class Entity extends Location implements Metadatable {
         return this.effects.containsKey(effectId);
     }
 
+    /**
+     * Check if the entity can be affected by the effect
+     *
+     * @param effectId the effect id
+     * @return true if the entity can be affected by the effect
+     */
+    public boolean canBeAffected(int effectId) {
+        return false;
+    }
+
     public void addEffect(Effect effect) {
         if (effect == null) {
             return; //here add null means add nothing
+        }
+
+        if (!canBeAffected(effect.getId())) {
+            return;
         }
 
         effect.add(this);
@@ -934,7 +954,7 @@ public abstract class Entity extends Location implements Metadatable {
             FloatEntityData bbW = new FloatEntityData(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
             this.dataProperties.put(bbH);
             this.dataProperties.put(bbW);
-            sendData(this.hasSpawned.values().toArray(new Player[0]), new EntityMetadata().put(bbH).put(bbW));
+            sendData(this.hasSpawned.values().toArray(Player.EMPTY_ARRAY), new EntityMetadata().put(bbH).put(bbW));
         }
     }
 
@@ -1810,6 +1830,7 @@ public abstract class Entity extends Location implements Metadatable {
         Server.broadcastPacket(hasSpawned.values().stream().filter(p -> p.protocol >= ProtocolInfo.v1_19_0).collect(Collectors.toList()), pk);
     }
 
+    @Override
     public Vector3 getDirectionVector() {
         Vector3 vector = super.getDirectionVector();
         return this.temporalVector.setComponents(vector.x, vector.y, vector.z);
@@ -1979,7 +2000,9 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public final void scheduleUpdate() {
-        this.level.updateEntities.put(this.id, this);
+        if (!this.closed && !this.level.isBeingConverted) {
+            this.level.updateEntities.put(this.id, this);
+        }
     }
 
     public boolean isOnFire() {
@@ -2232,15 +2255,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean isInsideOfWater() {
-        /*Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(this.y), NukkitMath.floorDouble(this.z)));
-
-        if (block instanceof BlockWater) {
-            return this.y < (block.y + 0.9);
-        }
-
-        return false;*/
-        int bid = level.getBlockIdAt(chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ());
-        return Block.hasWater(bid);
+        Block block = level.getBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ());
+        return block.isWater() || block.getWaterloggingLevel() > 0 && block.getLevelBlockAtLayer(1).isWater();
     }
 
     public boolean isInsideOfSolid() {
@@ -2709,9 +2725,6 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
-        double yaw = location.yaw;
-        double pitch = location.pitch;
-
         Location from = this.getLocation();
         Location to = location;
         if (cause != null) {
@@ -2733,7 +2746,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.setMotion(this.temporalVector.setComponents(0, 0, 0));
         }
 
-        if (this.setPositionAndRotation(to, yaw, pitch)) {
+        if (this.setPositionAndRotation(to, to.yaw, to.pitch, to.headYaw)) {
             this.resetFallDistance();
             this.onGround = !this.isNoClip();
 
@@ -2811,7 +2824,7 @@ public abstract class Entity extends Location implements Metadatable {
             if (data.getId() == DATA_FLAGS2) {
                 metadata.put(this.dataProperties.get(DATA_FLAGS));
             }
-            this.sendData(this.hasSpawned.values().toArray(new Player[0]), metadata);
+            this.sendData(this.hasSpawned.values().toArray(Player.EMPTY_ARRAY), metadata);
         }
         return true;
     }
@@ -3225,4 +3238,16 @@ public abstract class Entity extends Location implements Metadatable {
         playAnimationOnEntities(animation, entities, viewers);
     }
 
+    /**
+     * Whether the entity can pass through barrier blocks.
+     *
+     * @return passes through barriers
+     **/
+    public boolean canPassThroughBarrier() {
+        return this.passThroughBarrier;
+    }
+
+    public void setPassThroughBarrier(boolean passThroughBarrier) {
+        this.passThroughBarrier = passThroughBarrier;
+    }
 }

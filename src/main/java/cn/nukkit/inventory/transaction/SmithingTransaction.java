@@ -28,7 +28,6 @@ import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.inventory.transaction.action.SmithingItemAction;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 
 import java.util.List;
 
@@ -73,25 +72,29 @@ public class SmithingTransaction extends InventoryTransaction {
                 case 0:
                     this.equipmentItem = action.getTargetItem();
                     break;
-                // result
-                case 2:
-                    this.outputItem = action.getSourceItem();
-                    break;
                 // ingredient
                 case 1:
                     this.ingredientItem = action.getTargetItem();
+                    break;
+                // result
+                case 2:
+                    this.outputItem = action.getSourceItem();
                     break;
                 // template
                 case 3:
                     this.templateItem = action.getTargetItem();
                     break;
             }
-        } else if (action instanceof CreativeInventoryAction) {
+        } else if (action instanceof CreativeInventoryAction && this.source.isCreative()) {
             CreativeInventoryAction creativeAction = (CreativeInventoryAction) action;
-            if (creativeAction.getActionType() == 0
-                    && creativeAction.getSourceItem().isNull()
-                    && !creativeAction.getTargetItem().isNull() && creativeAction.getTargetItem().getId() == ItemID.NETHERITE_INGOT) {
-                this.ingredientItem = action.getTargetItem();
+            if (creativeAction.getActionType() == 0) {
+                switch (actions.size()) {
+                    case 7:
+                        this.equipmentItem = action.getTargetItem();
+                        break;
+                    case 8:
+                        this.outputItem = action.getSourceItem();
+                }
             }
         }
     }
@@ -134,7 +137,7 @@ public class SmithingTransaction extends InventoryTransaction {
         Item equipment = equipmentItem != null? equipmentItem : air;
         Item ingredient = ingredientItem != null? ingredientItem : air;
         Item template = templateItem != null? templateItem : air;
-        SmithingTableEvent event = new SmithingTableEvent(inventory, equipment, outputItem, ingredient, templateItem, source);
+        SmithingTableEvent event = new SmithingTableEvent(inventory, equipment, outputItem, ingredient, template, source);
         this.source.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             this.source.removeAllWindows(false);

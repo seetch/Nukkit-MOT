@@ -2,6 +2,7 @@ package cn.nukkit.potion;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityBoss;
 import cn.nukkit.entity.EntityLiving;
@@ -10,8 +11,10 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityEffectRemoveEvent;
 import cn.nukkit.event.entity.EntityEffectUpdateEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.MobEffectPacket;
 import cn.nukkit.utils.ServerException;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author MagicDroidX
@@ -19,6 +22,7 @@ import cn.nukkit.utils.ServerException;
  */
 public class Effect implements Cloneable {
 
+    public static final int NO_EFFECT = 0;
     public static final int SPEED = 1;
     public static final int SLOWNESS = 2;
     public static final int HASTE = 3;
@@ -55,12 +59,20 @@ public class Effect implements Cloneable {
     public static final int BAD_OMEN = 28;
     public static final int VILLAGE_HERO = 29;
     public static final int DARKNESS = 30;
+    public static final int TRIAL_OMEN = 31;
+    public static final int WIND_CHARGED = 32;
+    public static final int WEAVING = 33;
+    public static final int OOZING = 34;
+    public static final int INFESTED = 35;
+    public static final int RAID_OMEN = 36;
+
 
     protected static Effect[] effects;
 
     public static void init() {
         effects = new Effect[256];
 
+        effects[Effect.NO_EFFECT] = new Effect(NO_EFFECT, "%potion.empty", 56, 93, 198);
         effects[Effect.SPEED] = new Effect(Effect.SPEED, "%potion.moveSpeed", 124, 175, 198);
         effects[Effect.SLOWNESS] = new Effect(Effect.SLOWNESS, "%potion.moveSlowdown", 90, 108, 129, true);
         effects[Effect.HASTE] = new Effect(Effect.HASTE, "%potion.digSpeed", 217, 192, 67);
@@ -91,6 +103,12 @@ public class Effect implements Cloneable {
         effects[Effect.BAD_OMEN] = new Effect(Effect.BAD_OMEN, "%effect.badOmen", 11, 97, 56, true);
         effects[Effect.VILLAGE_HERO] = new Effect(Effect.VILLAGE_HERO, "%effect.villageHero", 68, 255, 68).setVisible(false);
         effects[Effect.DARKNESS] = new Effect(Effect.DARKNESS, "%effect.darkness", 41, 39, 33, true).setVisible(false);
+        effects[Effect.TRIAL_OMEN] = new Effect(Effect.TRIAL_OMEN, "%effect.trial_omen", 22, 166, 166).setVisible(false);
+        effects[Effect.WIND_CHARGED] = new Effect(Effect.WIND_CHARGED, "%effect.wind_charged", 189, 201, 255).setVisible(false);
+        effects[Effect.WEAVING] = new Effect(Effect.WEAVING, "%effect.weaving", 120, 105, 90, true).setVisible(false);
+        effects[Effect.OOZING] = new Effect(Effect.OOZING, "%effect.oozing", 153, 255, 163).setVisible(false);
+        effects[Effect.INFESTED] = new Effect(Effect.INFESTED, "%effect.infested", 140, 155, 140, true).setVisible(false);
+        effects[Effect.RAID_OMEN] = new Effect(Effect.RAID_OMEN, "%effect.raid_omen", 222, 64, 88).setVisible(false);
     }
 
     public static Effect getEffect(int id) {
@@ -233,6 +251,18 @@ public class Effect implements Cloneable {
         return new int[]{this.color >> 16, (this.color >> 8) & 0xff, this.color & 0xff};
     }
 
+    public int getRed() {
+        return this.color >> 16;
+    }
+
+    public int getGreen() {
+        return (this.color >> 8) & 0xff;
+    }
+
+    public int getBlue() {
+        return this.color & 0xff;
+    }
+
     public void setColor(int r, int g, int b) {
         this.color = ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
     }
@@ -246,49 +276,39 @@ public class Effect implements Cloneable {
             return;
         }
 
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
-            MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = entity.getId();
-            pk.effectId = this.getId();
-            pk.amplifier = this.getAmplifier();
-            pk.particles = this.isVisible();
-            pk.duration = this.getDuration();
-            if (oldEffect != null) {
-                pk.eventId = MobEffectPacket.EVENT_MODIFY;
-            } else {
-                pk.eventId = MobEffectPacket.EVENT_ADD;
+        if (entity instanceof EntityLiving) {
+            EntityLiving entityLiving = (EntityLiving) entity;
+            if (entity instanceof Player) {
+                Player player = (Player) entity;
+                MobEffectPacket pk = new MobEffectPacket();
+                pk.eid = entity.getId();
+                pk.effectId = this.getId();
+                pk.amplifier = this.getAmplifier();
+                pk.particles = this.isVisible();
+                pk.duration = this.getDuration();
+                if (oldEffect != null) {
+                    pk.eventId = MobEffectPacket.EVENT_MODIFY;
+                } else {
+                    pk.eventId = MobEffectPacket.EVENT_ADD;
+                }
+
+                player.dataPacket(pk);
             }
 
-            player.dataPacket(pk);
-
-            if (this.id == Effect.SPEED && (oldEffect == null || oldEffect.amplifier != this.amplifier)) {
-                if (oldEffect != null) {
+            if (this.id == Effect.SPEED) {
+                /*if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 + 0.2f * (oldEffect.amplifier + 1)), false);
                 }
-                player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * (this.amplifier + 1)));
+                player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * (this.amplifier + 1)));*/
+                entityLiving.setMovementSpeed(Player.DEFAULT_SPEED * (1 + 0.2f * (this.amplifier + 1)));
             }
 
-            if (this.id == Effect.SLOWNESS && (oldEffect == null || oldEffect.amplifier != this.amplifier)) {
-                if (oldEffect != null) {
+            if (this.id == Effect.SLOWNESS) {
+                /*if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 - 0.15f * (oldEffect.amplifier + 1)), false);
                 }
-                player.setMovementSpeed(player.getMovementSpeed() * (1 - 0.15f * (this.amplifier + 1)));
-            }
-        } else if (entity instanceof EntityLiving) {
-            EntityLiving entityLiving = (EntityLiving) entity;
-            if (this.id == Effect.SPEED && (oldEffect == null || oldEffect.amplifier != this.amplifier)) {
-                if (oldEffect != null) {
-                    entityLiving.setMovementSpeed(entityLiving.getMovementSpeed() / (1 + 0.2f * (oldEffect.amplifier + 1)));
-                }
-                entityLiving.setMovementSpeed(entityLiving.getMovementSpeed() * (1 + 0.2f * (this.amplifier + 1)));
-            }
-
-            if (this.id == Effect.SLOWNESS && (oldEffect == null || oldEffect.amplifier != this.amplifier)) {
-                if (oldEffect != null) {
-                    entityLiving.setMovementSpeed(entityLiving.getMovementSpeed() / (1 - 0.15f * (oldEffect.amplifier + 1)));
-                }
-                entityLiving.setMovementSpeed(entityLiving.getMovementSpeed() * (1 - 0.15f * (this.amplifier + 1)));
+                player.setMovementSpeed(player.getMovementSpeed() * (1 - 0.15f * (this.amplifier + 1)));*/
+                entityLiving.setMovementSpeed(Player.DEFAULT_SPEED * (1 - 0.15f * (this.amplifier + 1)));
             }
         }
 
@@ -320,13 +340,22 @@ public class Effect implements Cloneable {
                 pk.eventId = MobEffectPacket.EVENT_REMOVE;
 
                 player.dataPacket(pk);
-            }
 
-            if (this.id == Effect.SPEED) {
-                entityLiving.setMovementSpeed(entityLiving.getMovementSpeed() / (1 + 0.2f * (this.amplifier + 1)));
-            }
-            if (this.id == Effect.SLOWNESS) {
-                entityLiving.setMovementSpeed(entityLiving.getMovementSpeed() / (1 - 0.15f * (this.amplifier + 1)));
+                if (this.id == Effect.SPEED) {
+                    player.setMovementSpeed(player.isSprinting() ? Player.DEFAULT_SPEED * 1.3f : Player.DEFAULT_SPEED, false);
+                    player.setAttribute(Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(Player.DEFAULT_SPEED).setDefaultValue(Player.DEFAULT_SPEED));
+                }
+                if (this.id == Effect.SLOWNESS) {
+                    player.setMovementSpeed(player.isSprinting() ? Player.DEFAULT_SPEED * 1.3f : Player.DEFAULT_SPEED, false);
+                    player.setAttribute(Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(Player.DEFAULT_SPEED).setDefaultValue(Player.DEFAULT_SPEED));
+                }
+            } else {
+                if (this.id == Effect.SPEED) {
+                    entityLiving.setMovementSpeed(entityLiving.getMovementSpeed() / (1 + 0.2f * (this.amplifier + 1)));
+                }
+                if (this.id == Effect.SLOWNESS) {
+                    entityLiving.setMovementSpeed(entityLiving.getMovementSpeed() / (1 - 0.15f * (this.amplifier + 1)));
+                }
             }
             if (this.id == Effect.HEALTH_BOOST) {
                 float max = entity.getMaxHealth();
@@ -352,5 +381,63 @@ public class Effect implements Cloneable {
         } catch (CloneNotSupportedException e) {
             return null;
         }
+    }
+
+    public CompoundTag save() {
+        return save(new CompoundTag());
+    }
+
+    public CompoundTag save(CompoundTag tag) {
+        return tag.putByte("Id", this.id)
+                .putByte("Amplifier", this.amplifier)
+                .putInt("Duration", this.duration)
+                .putInt("DurationEasy", this.duration)
+                .putInt("DurationNormal", this.duration)
+                .putInt("DurationHard", this.duration)
+                .putBoolean("Ambient", this.ambient)
+                .putBoolean("ShowParticles", this.show)
+                .putBoolean("DisplayOnScreenTextureAnimation", false);
+    }
+
+    @Nullable
+    public static Effect load(CompoundTag tag) {
+        Effect effect = getEffect(tag.getByte("Id"));
+        if (effect == null) {
+            return null;
+        }
+        return effect.setAmplifier(tag.getByte("Amplifier"))
+                .setDuration(tag.getInt("Duration"))
+                .setAmbient(tag.getBoolean("Ambient"))
+                .setVisible(tag.getBoolean("ShowParticles"));
+    }
+
+    public static int calculateColor(Effect... effects) {
+        int total = 0;
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        for (Effect effect : effects) {
+            if (!effect.isVisible()) {
+                continue;
+            }
+
+            int level = effect.getAmplifier() + 1;
+
+            r += effect.getRed() * level;
+            g += effect.getGreen() * level;
+            b += effect.getBlue() * level;
+
+            total += level;
+        }
+
+        if (total == 0) {
+            return 0;
+        }
+
+        r = (r / total) & 0xff;
+        g = (g / total) & 0xff;
+        b = (b / total) & 0xff;
+        return (r << 16) | (g << 8) | b;
     }
 }

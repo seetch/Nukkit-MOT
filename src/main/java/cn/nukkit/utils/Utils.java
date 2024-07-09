@@ -10,6 +10,8 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -248,9 +250,14 @@ public class Utils {
         return result & 0xFFFFFFFFL;
     }
 
-    public static Object[][] splitArray(Object[] arrayToSplit, int chunkSize) {
+    @Nullable
+    public static Object[][] splitArray(Object[] arrayToSplit, @Nonnegative int chunkSize) {
         if (chunkSize <= 0) {
             return null;
+        }
+
+        if (arrayToSplit.length <= chunkSize) {
+            return new Object[][] { arrayToSplit };
         }
 
         int rest = arrayToSplit.length % chunkSize;
@@ -552,6 +559,10 @@ public class Utils {
                 return "1.20.60";
             case ProtocolInfo.v1_20_70:
                 return "1.20.70";
+            case ProtocolInfo.v1_20_80:
+                return "1.20.80";
+            case ProtocolInfo.v1_21_0:
+                return "1.21.0";
             //TODO Multiversion 添加新版本支持时修改这里
             default:
                 throw new IllegalStateException("Invalid protocol: " + protocol);
@@ -595,6 +606,8 @@ public class Utils {
                 return "Xbox";
             case 14:
                 return "Windows Phone";
+            case 15:
+                return "Linux";
             default:
                 return "Unknown";
         }

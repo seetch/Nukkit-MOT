@@ -10,7 +10,7 @@ import lombok.ToString;
 import java.util.*;
 import java.util.function.ObjIntConsumer;
 
-import static com.nukkitx.network.util.Preconditions.checkArgument;
+import static org.cloudburstmc.protocol.common.util.Preconditions.checkArgument;
 
 /**
  * @author MagicDroidX
@@ -166,7 +166,8 @@ public class AvailableCommandsPacket extends DataPacket {
             .insert(36, CommandParam.PERMISSION_ELEMENTS)
             .build();
     private static final TypeMap<CommandParam> COMMAND_PARAMS_594 = COMMAND_PARAMS_582.toBuilder()
-            .insert(134217728, CommandParam.CHAINED_COMMAND)
+            //TODO solve memory usage problem
+            //.insert(134217728, CommandParam.CHAINED_COMMAND)
             .build();
     private static final TypeMap<CommandParam> COMMAND_PARAMS_662 = COMMAND_PARAMS_594.toBuilder()
             .shift(24, 4)
@@ -184,9 +185,16 @@ public class AvailableCommandsPacket extends DataPacket {
             .insert(54, CommandParam.HAS_PROPERTY_ELEMENTS)
             .insert(55, CommandParam.HAS_PROPERTY_SELECTOR)
             .build();
+    private static final TypeMap<CommandParam> COMMAND_PARAMS_685 = COMMAND_PARAMS_662.toBuilder()
+            .shift(86, 4)
+            .insert(86, CommandParam.CODE_BUILDER_ARG)
+            .insert(87, CommandParam.CODE_BUILDER_ARGS)
+            .insert(88, CommandParam.CODE_BUILDER_SELECT_PARAM)
+            .insert(89, CommandParam.CODE_BUILDER_SELECTOR)
+            .build();
 
     //TODO Multiversion 保持最新版
-    private static final TypeMap<CommandParam> COMMAND_PARAMS = COMMAND_PARAMS_662.toBuilder().build();
+    private static final TypeMap<CommandParam> COMMAND_PARAMS = COMMAND_PARAMS_685.toBuilder().build();
 
     //兼容nk插件
     public static final int ARG_TYPE_UNKNOWN = COMMAND_PARAMS.getId(CommandParam.UNKNOWN);
@@ -215,7 +223,9 @@ public class AvailableCommandsPacket extends DataPacket {
 
     public static TypeMap<CommandParam> getCommandParams(int protocol) {
         //TODO Multiversion
-        if (protocol >= ProtocolInfo.v1_20_70) {
+        if (protocol >= ProtocolInfo.v1_21_0) {
+            return COMMAND_PARAMS_685;
+        } else if (protocol >= ProtocolInfo.v1_20_70) {
             return COMMAND_PARAMS_662;
         } else if (protocol >= ProtocolInfo.v1_20_10_21) {
             return COMMAND_PARAMS_594;

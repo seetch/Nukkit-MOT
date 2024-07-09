@@ -71,7 +71,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     public static Class<?>[] list = null;
     public static final Map<String, Supplier<Item>> NAMESPACED_ID_ITEM = new HashMap<>();
 
-    private static final HashMap<String,  Supplier<Item>> CUSTOM_ITEMS = new HashMap<>();
+    private static final HashMap<String, Supplier<Item>> CUSTOM_ITEMS = new HashMap<>();
     private static final HashMap<String, CustomItemDefinition> CUSTOM_ITEM_DEFINITIONS = new HashMap<>();
 
     protected Block block = null;
@@ -341,6 +341,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             list[RECORD_WAIT] = ItemRecordWait.class; //511
             list[SHIELD] = ItemShield.class; //513
             list[RECORD_5] = ItemRecord5.class; //636
+            list[DISC_FRAGMENT_5] = ItemDiscFragment5.class; //637
             list[OAK_CHEST_BOAT] = ItemChestBoatOak.class; //638
             list[BIRCH_CHEST_BOAT] = ItemChestBoatBirch.class; //639
             list[JUNGLE_CHEST_BOAT] = ItemChestBoatJungle.class; //640
@@ -374,7 +375,9 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             list[CRIMSON_DOOR] = ItemDoorCrimson.class; //755
             list[WARPED_DOOR] = ItemDoorWarped.class; //756
             list[WARPED_FUNGUS_ON_A_STICK] = ItemWarpedFungusOnAStick.class; //757
+            list[CHAIN] = ItemChain.class; //758
             list[RECORD_PIGSTEP] = ItemRecordPigstep.class; //759
+            list[NETHER_SPROUTS] = ItemNetherSprouts.class; //760
 
             list[AMETHYST_SHARD] = ItemAmethystShard.class; //771
             list[SPYGLASS] = ItemSpyglass.class; //772
@@ -430,6 +433,13 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             registerNamespacedIdItem(ItemShelterPotterySherd.class);
             registerNamespacedIdItem(ItemSkullPotterySherd.class);
             registerNamespacedIdItem(ItemSnortPotterySherd.class);
+            registerNamespacedIdItem(ItemBrush.class);
+            registerNamespacedIdItem(ItemGoatHorn.class);
+            registerNamespacedIdItem(ItemTrialKey.class);
+            registerNamespacedIdItem(ItemTrialKeyOminous.class);
+            registerNamespacedIdItem(ItemBreezeRod.class);
+            registerNamespacedIdItem(ItemWindCharge.class);
+            registerNamespacedIdItem(ItemMace.class);
 
             // 添加原版物品到NAMESPACED_ID_ITEM
             // Add vanilla items to NAMESPACED_ID_ITEM
@@ -443,7 +453,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                         damage = legacyEntry.getDamage();
                     }
                     Item item = Item.get(id, damage);
-                    if (item.getId() != 0) {
+                    if (item.getId() != 0 && !NAMESPACED_ID_ITEM.containsKey(entity.getKey())) {
                         NAMESPACED_ID_ITEM.put(entity.getKey(), () -> item);
                     }
                 } catch (Exception ignored) {
@@ -485,8 +495,9 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     private static final List<Item> creative630 = new ObjectArrayList<>();
     private static final List<Item> creative649 = new ObjectArrayList<>();
     private static final List<Item> creative662 = new ObjectArrayList<>();
+    private static final List<Item> creative671 = new ObjectArrayList<>();
+    private static final List<Item> creative685 = new ObjectArrayList<>();
 
-    @SuppressWarnings("unchecked")
     private static void initCreativeItems() {
         Server.getInstance().getLogger().debug("Loading creative items...");
         clearCreativeItems();
@@ -523,6 +534,8 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         registerCreativeItemsNew(ProtocolInfo.v1_20_50, ProtocolInfo.v1_20_50, creative630);
         registerCreativeItemsNew(ProtocolInfo.v1_20_60, ProtocolInfo.v1_20_60, creative649);
         registerCreativeItemsNew(ProtocolInfo.v1_20_70, ProtocolInfo.v1_20_70, creative662);
+        registerCreativeItemsNew(ProtocolInfo.v1_20_80, ProtocolInfo.v1_20_80, creative671);
+        registerCreativeItemsNew(ProtocolInfo.v1_21_0, ProtocolInfo.v1_21_0, creative685);
         //TODO Multiversion 添加新版本支持时修改这里
     }
 
@@ -541,7 +554,13 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
 
     private static void registerCreativeItemsNew(int protocol, int blockPaletteProtocol, List<Item> creativeItems) {
         JsonArray itemsArray;
-        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("creativeitems" + protocol + ".json")) {
+        String file;
+        if (protocol >= ProtocolInfo.v1_21_0) {
+            file = "CreativeItems/creative_items_" + protocol + ".json";
+        } else {
+            file = "creativeitems" + protocol + ".json";
+        }
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream(file)) {
             itemsArray = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonArray("items");
         } catch (Exception e) {
             throw new AssertionError("Error loading required block states!", e);
@@ -587,6 +606,8 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         Item.creative630.clear();
         Item.creative649.clear();
         Item.creative662.clear();
+        Item.creative671.clear();
+        Item.creative685.clear();
         //TODO Multiversion 添加新版本支持时修改这里
     }
 
@@ -698,6 +719,10 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                 return new ArrayList<>(Item.creative649);
             case v1_20_70:
                 return new ArrayList<>(Item.creative662);
+            case v1_20_80:
+                return new ArrayList<>(Item.creative671);
+            case v1_21_0:
+                return new ArrayList<>(Item.creative685);
             // TODO Multiversion
             default:
                 throw new IllegalArgumentException("Tried to get creative items for unsupported protocol version: " + protocol);
@@ -706,7 +731,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
 
     public static void addCreativeItem(Item item) {
         Server.mvw("Item#addCreativeItem(Item)");
-        addCreativeItem(v1_20_60, item);
+        addCreativeItem(v1_21_0, item);
     }
 
     public static void addCreativeItem(int protocol, Item item) {
@@ -800,6 +825,12 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                 break;
             case v1_20_70:
                 Item.creative662.add(item.clone());
+                break;
+            case v1_20_80:
+                Item.creative671.add(item.clone());
+                break;
+            case v1_21_0:
+                Item.creative685.add(item.clone());
                 break;
             // TODO Multiversion
             default:
@@ -972,6 +1003,8 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         registerCustomItem(customItem, v1_20_50, addCreativeItem, v1_20_50);
         registerCustomItem(customItem, v1_20_60, addCreativeItem, v1_20_60);
         registerCustomItem(customItem, v1_20_70, addCreativeItem, v1_20_70);
+        registerCustomItem(customItem, v1_20_80, addCreativeItem, v1_20_80);
+        registerCustomItem(customItem, v1_21_0, addCreativeItem, v1_21_0);
         //TODO Multiversion 添加新版本支持时修改这里
 
         return new OK<Void>(true);
@@ -1010,6 +1043,8 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             deleteCustomItem(customItem, v1_20_50, v1_20_50);
             deleteCustomItem(customItem, v1_20_60, v1_20_60);
             deleteCustomItem(customItem, v1_20_70, v1_20_70);
+            deleteCustomItem(customItem, v1_20_80, v1_20_80);
+            deleteCustomItem(customItem, v1_21_0, v1_21_0);
             //TODO Multiversion 添加新版本支持时修改这里
         }
     }
@@ -1111,7 +1146,10 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                 try {
                     Item item = constructor.get();
                     if (meta.isPresent()) {
-                        item.setDamage(meta.getAsInt());
+                        int metaValue = meta.getAsInt();
+                        if (metaValue != 0) {
+                            item.setDamage(metaValue);
+                        }
                     }
                     // Avoid the upcoming changes to the original item object
                     return item.clone();
@@ -1364,7 +1402,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
 
     public Enchantment[] getEnchantments() {
         if (!this.hasEnchantments()) {
-            return new Enchantment[0];
+            return Enchantment.EMPTY_ARRAY;
         }
 
         List<Enchantment> enchantments = new ArrayList<>();
@@ -1378,7 +1416,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             }
         }
 
-        return enchantments.toArray(new Enchantment[0]);
+        return enchantments.toArray(Enchantment.EMPTY_ARRAY);
     }
 
     public boolean hasEnchantment(int id) {
@@ -1917,6 +1955,14 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         return runtimeMapping.getNamespacedIdByNetworkId(this.getNetworkId(protocolId));
     }
 
+    /**
+     * 返回物品是否支持指定版本
+     * <p>
+     * Returns whether the item supports the specified version
+     *
+     * @param protocolId 协议版本 protocol version
+     * @return 是否支持 whether supported
+     */
     public boolean isSupportedOn(int protocolId) {
         return true;
     }
