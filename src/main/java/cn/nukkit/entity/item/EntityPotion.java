@@ -131,7 +131,8 @@ public class EntityPotion extends EntityProjectile {
                 nbt.putList("mobEffects", new ListTag<>().add(effect.save()));
             }
             Entity entity = Entity.createEntity("AreaEffectCloud", this.chunk, nbt);
-            if (entity instanceof EntityAreaEffectCloud entityAreaEffectCloud) {
+            if (entity instanceof EntityAreaEffectCloud) {
+                EntityAreaEffectCloud entityAreaEffectCloud = (EntityAreaEffectCloud) entity;
                 entityAreaEffectCloud.setOwner(this.shootingEntity);
             }
             entity.spawnToAll();

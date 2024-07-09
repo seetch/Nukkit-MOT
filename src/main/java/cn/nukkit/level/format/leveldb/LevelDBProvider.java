@@ -506,9 +506,10 @@ public class LevelDBProvider implements LevelProvider {
     }
 
     public CompletableFuture<Void> saveChunkFuture(int chunkX, int chunkZ, FullChunk fullChunk) {
-        if (!(fullChunk instanceof LevelDBChunk chunk)) {
+        if (!(fullChunk instanceof LevelDBChunk)) {
             throw new IllegalArgumentException("Only LevelDB chunks are supported");
         }
+        LevelDBChunk chunk = (LevelDBChunk) fullChunk;
 
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);
@@ -595,9 +596,10 @@ public class LevelDBProvider implements LevelProvider {
     }
 
     public void saveChunkSync(int chunkX, int chunkZ, FullChunk fullChunk) {
-        if (!(fullChunk instanceof LevelDBChunk chunk)) {
+        if (!(fullChunk instanceof LevelDBChunk)) {
             throw new IllegalArgumentException("Only LevelDB chunks are supported");
         }
+        LevelDBChunk chunk = (LevelDBChunk) fullChunk;
 
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);

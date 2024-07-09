@@ -42,7 +42,8 @@ public class BlockCandle extends BlockFlowable {
             target = target.up();
         }
         if (target.getId() == getId()) {
-            if (target instanceof BlockMeta candle) {
+            if (target instanceof BlockMeta) {
+                BlockMeta candle = (BlockMeta) target;
                 if (candle.getDamage(CANDLES_BIT) < 3) {
                     candle.setDamage(CANDLES_BIT, candle.getDamage(CANDLES_BIT) + 1);
                     this.getLevel().setBlock(target, target, true, true);

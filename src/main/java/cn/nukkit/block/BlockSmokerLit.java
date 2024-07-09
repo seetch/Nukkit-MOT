@@ -68,9 +68,10 @@ public class BlockSmokerLit extends BlockFurnaceBurning {
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
             BlockEntity t = this.getBlockEntity();
-            if (!(t instanceof BlockEntitySmoker smoker)) {
+            if (!(t instanceof BlockEntitySmoker)) {
                 return false;
             }
+            BlockEntitySmoker smoker = (BlockEntitySmoker) t;
 
             if (smoker.namedTag.contains("Lock") && smoker.namedTag.get("Lock") instanceof StringTag) {
                 if (!smoker.namedTag.getString("Lock").equals(item.getCustomName())) {

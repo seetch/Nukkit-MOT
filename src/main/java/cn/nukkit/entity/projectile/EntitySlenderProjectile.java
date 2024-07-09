@@ -17,7 +17,7 @@ import lombok.var;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author PowerNukkitX Project Team
@@ -78,7 +78,7 @@ public abstract class EntitySlenderProjectile extends EntityProjectile {
             Block[] collisionBlocks = this.level.getCollisionBlocks(currentAABB.offset(dirVector.x, dirVector.y, dirVector.z));
             List<Block> filteredBlocks;
             if (this.canPassThroughBarrier()) {
-                filteredBlocks = Arrays.stream(collisionBlocks).filter(block -> block.getId() != BlockID.BARRIER).toList();
+                filteredBlocks = Arrays.stream(collisionBlocks).filter(block -> block.getId() != BlockID.BARRIER).collect(Collectors.toList());
             } else {
                 filteredBlocks = Arrays.asList(collisionBlocks);
             }

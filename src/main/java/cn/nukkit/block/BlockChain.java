@@ -46,11 +46,14 @@ public class BlockChain extends BlockTransparentMeta {
     }
 
     public BlockFace.Axis getPillarAxis() {
-        return switch (this.getDamage() % 0x3) {
-            case 2 -> BlockFace.Axis.Z;
-            case 1 -> BlockFace.Axis.X;
-            default -> BlockFace.Axis.Y;
-        };
+        switch (this.getDamage() % 0x3) {
+            case 2:
+                return BlockFace.Axis.Z;
+            case 1:
+                return BlockFace.Axis.X;
+            default:
+                return BlockFace.Axis.Y;
+        }
     }
 
     @Override

@@ -127,12 +127,17 @@ public enum DyeColor {
     }
 
     private static int convertNewToOld(int meta) {
-        return switch (meta) {
-            case ItemDye.BLACK_NEW -> ItemDye.BLACK;
-            case ItemDye.BROWN_NEW -> ItemDye.BROWN;
-            case ItemDye.BLUE_NEW -> ItemDye.BLUE;
-            case ItemDye.WHITE_NEW -> ItemDye.WHITE;
-            default -> meta;
-        };
+        switch (meta) {
+            case ItemDye.BLACK_NEW:
+                return ItemDye.BLACK;
+            case ItemDye.BROWN_NEW:
+                return ItemDye.BROWN;
+            case ItemDye.BLUE_NEW:
+                return ItemDye.BLUE;
+            case ItemDye.WHITE_NEW:
+                return ItemDye.WHITE;
+            default:
+                return meta;
+        }
     }
 }

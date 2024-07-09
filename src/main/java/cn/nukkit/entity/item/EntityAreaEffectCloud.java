@@ -454,7 +454,8 @@ public class EntityAreaEffectCloud extends Entity {
                         }
                         break;
                     case Effect.SATURATION:
-                        if (entity instanceof Player player) {
+                        if (entity instanceof Player) {
+                            Player player = (Player) entity;
                             int level = 1 + effect.getAmplifier();
                             player.getFoodData().addFoodLevel(level, level * 2);
                         }

@@ -171,7 +171,10 @@ public class Skin {
     }
 
     public String getSkinResourcePatch() {
-        return Objects.requireNonNullElse(this.skinResourcePatch, "");
+        if (this.skinResourcePatch == null) {
+            return "";
+        }
+        return this.skinResourcePatch;
     }
 
     public SerializedImage getCapeData() {

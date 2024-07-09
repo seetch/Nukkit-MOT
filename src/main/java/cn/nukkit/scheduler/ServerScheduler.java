@@ -74,7 +74,7 @@ public class ServerScheduler {
     public TaskHandler scheduleTask(@NotNull Plugin plugin,
                                     @NotNull BiConsumer<Task, Integer> task,
                                     boolean asynchronous) {
-        PluginTask<Plugin> pluginTask = new PluginTask<>(plugin) {
+        PluginTask<Plugin> pluginTask = new PluginTask<Plugin>(plugin) {
             @Override
             public void onRun(int currentTick) {
                 task.accept(this, currentTick);
@@ -214,7 +214,7 @@ public class ServerScheduler {
                                                     int delay,
                                                     int period,
                                                     boolean asynchronous) {
-        PluginTask<Plugin> pluginTask = new PluginTask<>(plugin) {
+        PluginTask<Plugin> pluginTask = new PluginTask<Plugin>(plugin) {
             @Override
             public void onRun(int currentTick) {
                 task.accept(this, currentTick);

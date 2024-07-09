@@ -8,6 +8,9 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.network.protocol.StopSoundPacket;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,19 +37,19 @@ public class StopSoundCommand extends VanillaCommand {
             return false;
         }
 
-        List<Player> players = List.of(Player.EMPTY_ARRAY);
+        List<Player> players = Arrays.asList(Player.EMPTY_ARRAY);
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("@a")) {
-                players = Server.getInstance().getOnlinePlayers().values().stream().toList();
+                players = new ArrayList<>(Server.getInstance().getOnlinePlayers().values());
             } else if (args[0].equalsIgnoreCase("@s") && sender instanceof Player) {
-                players = List.of((Player) sender);
+                players = Collections.singletonList((Player) sender);
             } else {
                 Player p = Server.getInstance().getPlayer(args[0]);
                 if (p == null) {
                     sender.sendMessage(new TranslationContainer("commands.generic.player.notFound"));
                     return false;
                 }
-                players = List.of(p);
+                players = Collections.singletonList(p);
             }
         }
 

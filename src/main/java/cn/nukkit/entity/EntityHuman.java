@@ -18,7 +18,6 @@ import cn.nukkit.utils.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -326,7 +325,7 @@ public class EntityHuman extends EntityHumanType {
                 this.server.updatePlayerListData(this.uuid, this.getId(), this.getName(), this.skin, new Player[]{player});
             }
 
-            PlayerInventory playerInventory = Objects.requireNonNullElse(this.inventory, BaseEntity.EMPTY_INVENTORY);
+            PlayerInventory playerInventory = this.inventory != null ? this.inventory : BaseEntity.EMPTY_INVENTORY;
 
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = this.uuid;

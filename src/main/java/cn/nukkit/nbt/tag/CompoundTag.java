@@ -224,9 +224,10 @@ public class CompoundTag extends Tag implements Cloneable {
 
     public boolean containsList(String name, byte type) {
         Tag tag = tags.get(name);
-        if (!(tag instanceof ListTag<?> list)) {
+        if (!(tag instanceof ListTag<?>)) {
             return false;
         }
+        ListTag<?> list = (ListTag<?>) tag;
         byte listType = list.type;
         return listType == 0 || listType == type;
     }

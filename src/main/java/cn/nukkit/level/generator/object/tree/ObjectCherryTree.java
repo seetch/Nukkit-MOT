@@ -8,6 +8,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 import static cn.nukkit.block.BlockID.CHERRY_LEAVES;
@@ -166,16 +167,28 @@ public class ObjectCherryTree extends TreeGenerator {
         var canPlace = false;
         for (int i = 0; i < 4; i++) {
             growDirection = (growDirection + 1) % 4;
-            xMultiplier = switch (growDirection) {
-                case 0 -> -1;
-                case 1 -> 1;
-                default -> 0;
-            };
-            zMultiplier = switch (growDirection) {
-                case 2 -> -1;
-                case 3 -> 1;
-                default -> 0;
-            };
+            switch (growDirection) {
+                case 0:
+                    xMultiplier = -1;
+                    break;
+                case 1:
+                    xMultiplier = 1;
+                    break;
+                default:
+                    xMultiplier = 0;
+                    break;
+            }
+            switch (growDirection) {
+                case 2:
+                    zMultiplier = -1;
+                    break;
+                case 3:
+                    zMultiplier = 1;
+                    break;
+                default:
+                    zMultiplier = 0;
+                    break;
+            }
             if (canPlaceObject(level, sideTrunkHeight, x + xMultiplier * sideTrunkHeight, y,
                     z + zMultiplier * sideTrunkHeight)) {
                 canPlace = true;

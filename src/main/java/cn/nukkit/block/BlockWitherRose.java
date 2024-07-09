@@ -27,7 +27,8 @@ public class BlockWitherRose extends BlockFlower {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        if (level.getServer().getDifficulty() != 0 && entity instanceof EntityLiving living) {
+        if (level.getServer().getDifficulty() != 0 && entity instanceof EntityLiving) {
+            EntityLiving living = (EntityLiving) entity;
             if (!living.invulnerable && !living.hasEffect(Effect.WITHER)
                     && (!(living instanceof Player) || !((Player) living).isCreative() && !((Player) living).isSpectator())) {
                 Effect effect = Effect.getEffect(Effect.WITHER);

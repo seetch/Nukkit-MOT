@@ -74,7 +74,7 @@ public class RakNetInterface implements AdvancedSourceInterface {
                 .childOption(RakChannelOption.RAK_ORDERING_CHANNELS, 1)
                 .option(RakChannelOption.RAK_SEND_COOKIE, true)
                 .option(RakChannelOption.RAK_PACKET_LIMIT, this.server.rakPacketLimit)
-                .handler(new ChannelInitializer<>() {
+                .handler(new ChannelInitializer() {
                     @Override
                     protected void initChannel(Channel channel) {
                         if (server.getPropertyBoolean("enable-query", false)) {
@@ -87,7 +87,7 @@ public class RakNetInterface implements AdvancedSourceInterface {
                         }
                     }
                 })
-                .childHandler(new ChannelInitializer<>() {
+                .childHandler(new ChannelInitializer() {
                     @Override
                     protected void initChannel(Channel channel) {
                         RakNetPlayerSession nukkitSession = new RakNetPlayerSession(RakNetInterface.this, (RakChildChannel) channel);

@@ -57,14 +57,30 @@ public class ItemGoatHorn extends StringItemBase {
 
     public void playSound(Player player) {
         switch (this.getDamage()) {
-            case 0 -> player.getLevel().addSound(player, Sound.HORN_CALL_0);
-            case 1 -> player.getLevel().addSound(player, Sound.HORN_CALL_1);
-            case 2 -> player.getLevel().addSound(player, Sound.HORN_CALL_2);
-            case 3 -> player.getLevel().addSound(player, Sound.HORN_CALL_3);
-            case 4 -> player.getLevel().addSound(player, Sound.HORN_CALL_4);
-            case 5 -> player.getLevel().addSound(player, Sound.HORN_CALL_5);
-            case 6 -> player.getLevel().addSound(player, Sound.HORN_CALL_6);
-            case 7 -> player.getLevel().addSound(player, Sound.HORN_CALL_7);
+            case 0:
+                player.getLevel().addSound(player, Sound.HORN_CALL_0);
+                break;
+            case 1:
+                player.getLevel().addSound(player, Sound.HORN_CALL_1);
+                break;
+            case 2:
+                player.getLevel().addSound(player, Sound.HORN_CALL_2);
+                break;
+            case 3:
+                player.getLevel().addSound(player, Sound.HORN_CALL_3);
+                break;
+            case 4:
+                player.getLevel().addSound(player, Sound.HORN_CALL_4);
+                break;
+            case 5:
+                player.getLevel().addSound(player, Sound.HORN_CALL_5);
+                break;
+            case 6:
+                player.getLevel().addSound(player, Sound.HORN_CALL_6);
+                break;
+            case 7:
+                player.getLevel().addSound(player, Sound.HORN_CALL_7);
+                break;
         }
     }
 

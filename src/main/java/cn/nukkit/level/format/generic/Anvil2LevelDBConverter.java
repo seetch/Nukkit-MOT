@@ -13,8 +13,8 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.plugin.InternalPlugin;
 import cn.nukkit.scheduler.TaskHandler;
-import cn.nukkit.utils.collection.nb.Long2ObjectNonBlockingMap;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -197,9 +197,9 @@ public class Anvil2LevelDBConverter {
         newChunk.setBiomeIdArray(oldChunk.getBiomeIdArray());
 
         newChunk.heightMap = Arrays.copyOf(oldChunk.getHeightMapArray(), oldChunk.getHeightMapArray().length);
-        newChunk.tiles = new Long2ObjectNonBlockingMap<>();
+        newChunk.tiles = new Long2ObjectOpenHashMap<>();
         newChunk.tiles.putAll(oldChunk.getBlockEntities());
-        newChunk.entities = new Long2ObjectNonBlockingMap<>();
+        newChunk.entities = new Long2ObjectOpenHashMap<>();
         newChunk.entities.putAll(oldChunk.getEntities());
         newChunk.tileList = oldChunk.tileList;
 

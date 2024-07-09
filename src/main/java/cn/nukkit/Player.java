@@ -83,7 +83,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.gson.JsonParser;
 import io.netty.util.internal.PlatformDependent;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -103,15 +102,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -2084,7 +2078,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     for (int coordZ = this.getFloorZ() - radius; coordZ < this.getFloorZ() + radius + 1; coordZ++) {
                         Block up = level.getBlock(coordX, this.getFloorY(), coordZ);
                         Block block = level.getBlock(coordX, this.getFloorY() - 1, coordZ);
-                        if (block instanceof BlockWater water && up.isAir()) {
+                        if (block instanceof BlockWater && up.isAir()) {
+                            BlockWater water = (BlockWater) block;
                             if (water.getFluidHeightPercent() < 0.15) {
                                 WaterFrostEvent ev = new WaterFrostEvent(block);
                                 server.getPluginManager().callEvent(ev);
@@ -3915,98 +3910,99 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 // Nasty hack because the client won't change the right packet in survival when creating netherite stuff,
                 // so we are emulating what Mojang should be sending
                 if (getWindowById(SMITHING_WINDOW_ID) instanceof SmithingInventory
-                        && transactionPacket.transactionType == InventoryTransactionPacket.TYPE_MISMATCH
-                        && !smithingInventory.getResult().isNull()) {
+                        && transactionPacket.transactionType == InventoryTransactionPacket.TYPE_MISMATCH) {
                     SmithingInventory smithingInventory = (SmithingInventory) getWindowById(SMITHING_WINDOW_ID);
-                    InventoryTransactionPacket fixedPacket = new InventoryTransactionPacket();
-                    fixedPacket.isRepairItemPart = true;
-                    fixedPacket.actions = new NetworkInventoryAction[8];
+                    if (!smithingInventory.getResult().isNull()) {
+                        InventoryTransactionPacket fixedPacket = new InventoryTransactionPacket();
+                        fixedPacket.isRepairItemPart = true;
+                        fixedPacket.actions = new NetworkInventoryAction[8];
 
-                    Item fromIngredient = smithingInventory.getIngredient().clone();
-                    Item toIngredient = fromIngredient.decrement(1);
+                        Item fromIngredient = smithingInventory.getIngredient().clone();
+                        Item toIngredient = fromIngredient.decrement(1);
 
-                    Item fromEquipment = smithingInventory.getEquipment().clone();
-                    Item toEquipment = fromEquipment.decrement(1);
+                        Item fromEquipment = smithingInventory.getEquipment().clone();
+                        Item toEquipment = fromEquipment.decrement(1);
 
-                    Item fromTemplate = smithingInventory.getTemplate().clone();
-                    Item toTemplate = fromTemplate.decrement(1);
+                        Item fromTemplate = smithingInventory.getTemplate().clone();
+                        Item toTemplate = fromTemplate.decrement(1);
 
-                    Item fromResult = Item.get(Item.AIR);
-                    Item toResult = smithingInventory.getResult().clone();
+                        Item fromResult = Item.get(Item.AIR);
+                        Item toResult = smithingInventory.getResult().clone();
 
-                    NetworkInventoryAction action = new NetworkInventoryAction();
-                    action.windowId = ContainerIds.UI;
-                    action.inventorySlot = SmithingInventory.SMITHING_INGREDIENT_UI_SLOT;
-                    action.oldItem = fromIngredient.clone();
-                    action.newItem = toIngredient.clone();
-                    fixedPacket.actions[0] = action;
+                        NetworkInventoryAction action = new NetworkInventoryAction();
+                        action.windowId = ContainerIds.UI;
+                        action.inventorySlot = SmithingInventory.SMITHING_INGREDIENT_UI_SLOT;
+                        action.oldItem = fromIngredient.clone();
+                        action.newItem = toIngredient.clone();
+                        fixedPacket.actions[0] = action;
 
-                    action = new NetworkInventoryAction();
-                    action.windowId = ContainerIds.UI;
-                    action.inventorySlot = SmithingInventory.SMITHING_EQUIPMENT_UI_SLOT;
-                    action.oldItem = fromEquipment.clone();
-                    action.newItem = toEquipment.clone();
-                    fixedPacket.actions[1] = action;
+                        action = new NetworkInventoryAction();
+                        action.windowId = ContainerIds.UI;
+                        action.inventorySlot = SmithingInventory.SMITHING_EQUIPMENT_UI_SLOT;
+                        action.oldItem = fromEquipment.clone();
+                        action.newItem = toEquipment.clone();
+                        fixedPacket.actions[1] = action;
 
 
-                    action = new NetworkInventoryAction();
-                    action.windowId = ContainerIds.UI;
-                    action.inventorySlot = SmithingInventory.SMITHING_TEMPLATE_UI_SLOT;
-                    action.oldItem = fromTemplate.clone();
-                    action.newItem = toTemplate.clone();
-                    fixedPacket.actions[2] = action;
+                        action = new NetworkInventoryAction();
+                        action.windowId = ContainerIds.UI;
+                        action.inventorySlot = SmithingInventory.SMITHING_TEMPLATE_UI_SLOT;
+                        action.oldItem = fromTemplate.clone();
+                        action.newItem = toTemplate.clone();
+                        fixedPacket.actions[2] = action;
 
-                    int emptyPlayerSlot = -1;
-                    for (int slot = 0; slot < inventory.getSize(); slot++) {
-                        if (inventory.getItem(slot).isNull()) {
-                            emptyPlayerSlot = slot;
-                            break;
+                        int emptyPlayerSlot = -1;
+                        for (int slot = 0; slot < inventory.getSize(); slot++) {
+                            if (inventory.getItem(slot).isNull()) {
+                                emptyPlayerSlot = slot;
+                                break;
+                            }
                         }
-                    }
-                    if (emptyPlayerSlot == -1) {
-                        this.needSendInventory = true;
-                        return;
-                    } else {
-                        action = new NetworkInventoryAction();
-                        action.windowId = ContainerIds.INVENTORY;
-                        action.inventorySlot = emptyPlayerSlot; // Cursor
-                        action.oldItem = Item.get(Item.AIR);
-                        action.newItem = toResult.clone();
-                        fixedPacket.actions[3] = action;
+                        if (emptyPlayerSlot == -1) {
+                            this.needSendInventory = true;
+                            return;
+                        } else {
+                            action = new NetworkInventoryAction();
+                            action.windowId = ContainerIds.INVENTORY;
+                            action.inventorySlot = emptyPlayerSlot; // Cursor
+                            action.oldItem = Item.get(Item.AIR);
+                            action.newItem = toResult.clone();
+                            fixedPacket.actions[3] = action;
 
-                        action = new NetworkInventoryAction();
-                        action.sourceType = NetworkInventoryAction.SOURCE_TODO;
-                        action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_RESULT;
-                        action.inventorySlot = 2; // result
-                        action.oldItem = toResult.clone();
-                        action.newItem = fromResult.clone();
-                        fixedPacket.actions[4] = action;
+                            action = new NetworkInventoryAction();
+                            action.sourceType = NetworkInventoryAction.SOURCE_TODO;
+                            action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_RESULT;
+                            action.inventorySlot = 2; // result
+                            action.oldItem = toResult.clone();
+                            action.newItem = fromResult.clone();
+                            fixedPacket.actions[4] = action;
 
-                        action = new NetworkInventoryAction();
-                        action.sourceType = NetworkInventoryAction.SOURCE_TODO;
-                        action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_INPUT;
-                        action.inventorySlot = 0; // equipment
-                        action.oldItem = toEquipment.clone();
-                        action.newItem = fromEquipment.clone();
-                        fixedPacket.actions[5] = action;
+                            action = new NetworkInventoryAction();
+                            action.sourceType = NetworkInventoryAction.SOURCE_TODO;
+                            action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_INPUT;
+                            action.inventorySlot = 0; // equipment
+                            action.oldItem = toEquipment.clone();
+                            action.newItem = fromEquipment.clone();
+                            fixedPacket.actions[5] = action;
 
-                        action = new NetworkInventoryAction();
-                        action.sourceType = NetworkInventoryAction.SOURCE_TODO;
-                        action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_MATERIAL;
-                        action.inventorySlot = 1; // material
-                        action.oldItem = toIngredient.clone();
-                        action.newItem = fromIngredient.clone();
-                        fixedPacket.actions[6] = action;
+                            action = new NetworkInventoryAction();
+                            action.sourceType = NetworkInventoryAction.SOURCE_TODO;
+                            action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_MATERIAL;
+                            action.inventorySlot = 1; // material
+                            action.oldItem = toIngredient.clone();
+                            action.newItem = fromIngredient.clone();
+                            fixedPacket.actions[6] = action;
 
-                        action = new NetworkInventoryAction();
-                        action.sourceType = NetworkInventoryAction.SOURCE_TODO;
-                        action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_MATERIAL;
-                        action.inventorySlot = 3; // template
-                        action.oldItem = toTemplate.clone();
-                        action.newItem = fromTemplate.clone();
-                        fixedPacket.actions[7] = action;
+                            action = new NetworkInventoryAction();
+                            action.sourceType = NetworkInventoryAction.SOURCE_TODO;
+                            action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_MATERIAL;
+                            action.inventorySlot = 3; // template
+                            action.oldItem = toTemplate.clone();
+                            action.newItem = fromTemplate.clone();
+                            fixedPacket.actions[7] = action;
 
-                        transactionPacket = fixedPacket;
+                            transactionPacket = fixedPacket;
+                        }
                     }
                 }
 

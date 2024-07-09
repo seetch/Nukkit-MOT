@@ -54,7 +54,8 @@ public abstract class AbstractResourcePack implements ResourcePack {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ResourcePack anotherPack)) return false;
+        if (!(obj instanceof ResourcePack)) return false;
+        ResourcePack anotherPack = (ResourcePack) obj;
         return this.getPackId().equals(anotherPack.getPackId());
     }
 }

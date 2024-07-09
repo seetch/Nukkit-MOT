@@ -44,7 +44,7 @@ public class BlockStateMapping {
             .expirationPolicy(ExpirationPolicy.ACCESSED)
             .build();
     private final Int2ObjectMap<BlockStateSnapshot> runtime2State = new Int2ObjectOpenHashMap<>();
-    private final Object2ObjectMap<NbtMap, BlockStateSnapshot> paletteMap = new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
+    private final Object2ObjectMap<NbtMap, BlockStateSnapshot> paletteMap = new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<NbtMap>() {
         @Override
         public int hashCode(NbtMap nbtMap) {
             return nbtMap.hashCode();
@@ -55,7 +55,7 @@ public class BlockStateMapping {
             return Objects.equals(nbtMap, nbtMap2);
         }
     });
-    private final Object2ObjectMap<NbtMap, BlockStateSnapshot> customCacheMap = new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
+    private final Object2ObjectMap<NbtMap, BlockStateSnapshot> customCacheMap = new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<NbtMap>() {
         @Override
         public int hashCode(NbtMap nbtMap) {
             return nbtMap.hashCode();
